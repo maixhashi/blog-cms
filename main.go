@@ -1,12 +1,12 @@
 package main
 
 import (
-	"go-rest-api/controller"
-	"go-rest-api/db"
-	"go-rest-api/repository"
-	"go-rest-api/router"
-	"go-rest-api/usecase"
-	"go-rest-api/validator"
+	"go-react-app/controller"
+	"go-react-app/db"
+	"go-react-app/repository"
+	"go-react-app/router"
+	"go-react-app/usecase"
+	"go-react-app/validator"
 )
 
 func main() {

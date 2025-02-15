@@ -1,9 +1,9 @@
 package usecase
 
 import (
-	"go-rest-api/model"
-	"go-rest-api/repository"
-	"go-rest-api/validator"
+	"go-react-app/model"
+	"go-react-app/repository"
+	"go-react-app/validator"
 )
 
 type ITaskUsecase interface {
