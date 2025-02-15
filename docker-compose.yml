@@ -1,0 +1,15 @@
+version: "3.8"
+services:
+  dev-postgres:
+    image: postgres:15.1-alpine
+    ports:
+      - 5434:5432
+    environment:
+      POSTGRES_USER: go-react-app-owner
+      POSTGRES_PASSWORD: go-react-app-owner
+      POSTGRES_DB: go-react-app-owner
+    restart: always
+    networks:
+      - go-react-app-network
+networks:
+  go-react-app-network:
