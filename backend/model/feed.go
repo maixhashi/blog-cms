@@ -5,7 +5,7 @@ import "time"
 type Feed struct {
 	ID            uint       `json:"id" gorm:"primaryKey"`
 	Title         string     `json:"title" gorm:"not null"`           // フィードの名前 (例: "TechCrunch")
-	URL           string     `json:"url" gorm:"not null;unique"`      // RSS/AtomのURL
+	URL           string     `json:"url" gorm:"not null"`      // RSS/AtomのURL
 	SiteURL       string     `json:"site_url"`                        // フィード元のサイトURL
 	Description   string     `json:"description"`                     // フィードの説明・概要
 	LastFetchedAt *time.Time `json:"last_fetched_at"`                 // 最後にフィードを取得した日時（NULL 許容）
