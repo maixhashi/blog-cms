@@ -21,6 +21,8 @@ type State = {
   editedFeed: EditedFeed
   updateEditedFeed: (payload: EditedFeed) => void
   resetEditedFeed: () => void
+  selectedFeedId: number | null // 修正: selectedFeedId に変更
+  setSelectedFeedId: (feedId: number | null) => void // 修正: 選択されたFeedのIDを更新
 }
 
 const useStore = create<State>((set) => ({
@@ -50,6 +52,8 @@ const useStore = create<State>((set) => ({
     description: '',
     last_fetched_at: new Date(),
   } }),
+  selectedFeedId: null, // 修正: 初期状態は null
+  setSelectedFeedId: (feedId) => set({ selectedFeedId: feedId }) // 修正: 選択されたFeedのIDを更新
 }))
 
 export default useStore

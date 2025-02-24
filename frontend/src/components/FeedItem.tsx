@@ -5,13 +5,18 @@ import { Feed } from '../types'
 import { useMutateFeed } from '../hooks/useMutateFeed'
 import '../FeedItem.css'
 
-const FeedItemMemo: FC<Omit<Feed, 'created_at' | 'updated_at'>> = ({
+interface FeedItemProps extends Omit<Feed, 'created_at' | 'updated_at'> {
+  onEdit: () => void
+}
+
+const FeedItemMemo: FC<FeedItemProps> = ({
   id,
   title,
   url,
   site_url,
   description,
   last_fetched_at,
+  onEdit, // ← 追加
 }) => {
   const updateFeed = useStore((state) => state.updateEditedFeed)
   const { deleteFeedMutation } = useMutateFeed()
@@ -30,6 +35,7 @@ const FeedItemMemo: FC<Omit<Feed, 'created_at' | 'updated_at'>> = ({
               description: description,
               last_fetched_at: last_fetched_at,
             })
+            onEdit() // ← 追加
           }}
         />
         <TrashIcon
@@ -42,4 +48,5 @@ const FeedItemMemo: FC<Omit<Feed, 'created_at' | 'updated_at'>> = ({
     </li>
   )
 }
+
 export const FeedItem = memo(FeedItemMemo)
