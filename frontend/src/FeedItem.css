@@ -1,0 +1,46 @@
+/* FeedItem.css */
+.feed-item {
+  margin: 12px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-radius: 4px;
+  background-color: #f8f9fa;
+  transition: background-color 0.3s ease;
+}
+
+.feed-item:hover {
+  background-color: #e9ecef;
+}
+
+.feed-title {
+  font-weight: bold;
+  color: #333;
+}
+
+.feed-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.feed-icon {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.feed-icon:hover {
+  transform: scale(1.2);
+}
+
+.feed-icon.edit {
+  color: #3b82f6; /* 青色 */
+  margin-left: 15px;
+  margin-right: 10px;
+}
+
+.feed-icon.delete {
+  color: #ef4444; /* 赤色 */
+}
