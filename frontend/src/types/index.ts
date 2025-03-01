@@ -30,3 +30,23 @@ export type ExternalAPI = {
   created_at: string
   updated_at: string
 }
+
+export type QiitaTag = {
+  name: string
+}
+
+export type QiitaUser = {
+  id: string
+  profile_image_url: string
+  name: string
+}
+
+export type QiitaArticle = {
+  id: string
+  title: string
+  url: string
+  likes_count: number
+  tags: QiitaTag[]
+  created_at: string
+  user: QiitaUser
+}

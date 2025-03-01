@@ -6,6 +6,7 @@ import { Feed } from './components/Feed'
 import { ExternalAPIManager } from './components/ExternalAPIManager'
 import axios from 'axios'
 import { CsrfToken } from './types'
+import { QiitaPage } from './pages/QiitaPage'
 
 function App() {
   useEffect(() => {
@@ -25,6 +26,7 @@ function App() {
         <Route path="/todo" element={<Todo />} />
         <Route path="/feed" element={<Feed />} />
         <Route path="/external-api-manager" element={<ExternalAPIManager />} />
+        <Route path="/qiita-articles" element={<QiitaPage />} />
       </Routes>
     </BrowserRouter>
   )
