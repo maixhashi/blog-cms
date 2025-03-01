@@ -26,12 +26,18 @@ func main() {
 	taskUsecase := usecase.NewTaskUsecase(taskRepository, taskValidator)
 	taskController := controller.NewTaskController(taskUsecase)
 
-	// タスクのCRUD機能
+	// フィードのCRUD機能
 	feedValidator := validator.NewFeedValidator()
 	feedRepository := repository.NewFeedRepository(db)
 	feedUsecase := usecase.NewFeedUsecase(feedRepository, feedValidator)
 	feedController := controller.NewFeedController(feedUsecase)
 
-	e := router.NewRouter(userController, taskController, feedController)
+	// 外部APIのCRUD機能
+	externalAPIValidator := validator.NewExternalAPIValidator()
+	externalAPIRepository := repository.NewExternalAPIRepository(db)
+	externalAPIUsecase := usecase.NewExternalAPIUsecase(externalAPIRepository, externalAPIValidator)
+	externalAPIController := controller.NewExternalAPIController(externalAPIUsecase)
+
+	e := router.NewRouter(userController, taskController, feedController, externalAPIController)
 	e.Logger.Fatal(e.Start(":8080"))
 }
