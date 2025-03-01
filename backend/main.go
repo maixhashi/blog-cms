@@ -38,6 +38,10 @@ func main() {
 	externalAPIUsecase := usecase.NewExternalAPIUsecase(externalAPIRepository, externalAPIValidator)
 	externalAPIController := controller.NewExternalAPIController(externalAPIUsecase)
 
-	e := router.NewRouter(userController, taskController, feedController, externalAPIController)
+	qiitaRepository := repository.NewQiitaRepository()
+	qiitaUsecase := usecase.NewQiitaUsecase(qiitaRepository)
+	qiitaController := controller.NewQiitaController(qiitaUsecase)
+
+	e := router.NewRouter(userController, taskController, feedController, externalAPIController, qiitaController)
 	e.Logger.Fatal(e.Start(":8080"))
 }
