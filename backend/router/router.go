@@ -10,7 +10,7 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
-func NewRouter(uc controller.IUserController, tc controller.ITaskController, fc controller.IFeedController) *echo.Echo {
+func NewRouter(uc controller.IUserController, tc controller.ITaskController, fc controller.IFeedController, ac controller.IExternalAPIController) *echo.Echo {
 	e := echo.New()
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"http://localhost:3000", os.Getenv("FE_URL")},
@@ -55,6 +55,18 @@ func NewRouter(uc controller.IUserController, tc controller.ITaskController, fc 
 	f.POST("", fc.CreateFeed)
 	f.PUT("/:feedId", fc.UpdateFeed)
 	f.DELETE("/:feedId", fc.DeleteFeed)
+
+	// 外部API関連のルート
+	a := e.Group("/external-apis")
+	a.Use(echojwt.WithConfig(echojwt.Config{
+		SigningKey:  []byte(os.Getenv("SECRET")),
+		TokenLookup: "cookie:token",
+	}))
+	a.GET("", ac.GetAllExternalAPIs)
+	a.GET("/:apiId", ac.GetExternalAPIById)
+	a.POST("", ac.CreateExternalAPI)
+	a.PUT("/:apiId", ac.UpdateExternalAPI)
+	a.DELETE("/:apiId", ac.DeleteExternalAPI)
 
 	return e
 }
