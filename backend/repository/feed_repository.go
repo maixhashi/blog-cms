@@ -49,6 +49,7 @@ func (fr *feedRepository) UpdateFeed(feed *model.Feed, userId uint, feedId uint)
 	result := fr.db.Model(feed).Clauses(clause.Returning{}).Where("id=? AND user_id=?", feedId, userId).Updates(map[string]interface{}{
 		"title":       feed.Title,
 		"url":         feed.URL,
+		"site_url":         feed.SiteURL,
 		"description": feed.Description,
 	})
 	if result.Error != nil {
