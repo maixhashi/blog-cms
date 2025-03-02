@@ -3,6 +3,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import {
   ArrowRightStartOnRectangleIcon,
   ShieldCheckIcon,
+  PlusCircleIcon,
 } from '@heroicons/react/24/solid';
 import useStore from '../store';
 import { useQueryFeeds } from '../hooks/useQueryFeeds';
@@ -24,6 +25,12 @@ export const Feed = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [isSelecting, setIsSelecting] = useState(false);
 
+  // Function to create a new feed
+  const handleCreateNew = () => {
+    updateFeed({ id: 0, title: '', url: '', site_url: '', description: '', last_fetched_at: new Date() });
+    setIsEditing(true);
+  };
+
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.metaKey && event.key === 'e') {
@@ -40,8 +47,7 @@ export const Feed = () => {
       }
       if (event.metaKey && event.key === 'n') {
         event.preventDefault();
-        updateFeed({ id: 0, title: '', url: '', site_url: '', description: '', last_fetched_at: new Date() });
-        setIsEditing(true);
+        handleCreateNew();
       }
       if (event.metaKey && event.key === 'l') {
         event.preventDefault();
@@ -81,10 +87,22 @@ export const Feed = () => {
   return (
     <div className="feed-container">
       <div className="feed-header">
-        <ShieldCheckIcon className="header-icon" />
-        <span className="header-title">Feed Manager</span>
+        <div className="header-left">
+          <ShieldCheckIcon className="header-icon" />
+          <span className="header-title">Feed Manager</span>
+        </div>
+        <div className="header-right">
+          <button 
+            className="create-button" 
+            onClick={handleCreateNew}
+            title="新規作成 (⌘+N)"
+          >
+            <PlusCircleIcon className="create-icon" />
+            <span>新規作成</span>
+          </button>
+          <ArrowRightStartOnRectangleIcon onClick={logout} className="logout-icon" title="ログアウト" />
+        </div>
       </div>
-      <ArrowRightStartOnRectangleIcon onClick={logout} className="logout-icon" />
       
       <ul className="feed-list">
         {data?.map((feed, index) => (

@@ -70,3 +70,20 @@ export interface HatenaArticle {
   published_at: string;
   author: string;
 }
+
+export type FeedArticle = {
+  id: number
+  title: string
+  content: string
+  summary?: string
+  url: string
+  published_at: string | Date
+  feed_id: number
+  feed_title?: string
+  author?: string
+  thumbnail_url?: string
+  tags?: string[]
+  likes_count?: number
+  created_at?: string | Date
+  updated_at?: string | Date
+}

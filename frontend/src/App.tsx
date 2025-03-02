@@ -11,6 +11,7 @@ import { QiitaPage } from './pages/QiitaPage'
 import { ArticleEditorPage } from './pages/ArticleEditorPage'
 import { HatenaPage } from './pages/HatenaPage'
 import RouteMapPage from './pages/RouteMapPage'
+import { FeedArticlesPage } from './pages/FeedArticlesPage'
 
 function App() {
   useEffect(() => {
@@ -27,17 +28,18 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Auth />} />
-        <Route path="/todo" element={<Todo />} />
-        <Route path="/feed" element={<Feed />} />
-        <Route path="/external-api-manager" element={<ExternalAPIManager />} />
+        <Route path="/task-manager" element={<Todo />} />
+        <Route path="/feed-manager" element={<Feed />} />
         <Route path="/article-manager" element={<ArticleManager />} />
+        <Route path="/external-api-manager" element={<ExternalAPIManager />} />
+        
         <Route path="/qiita-articles" element={<QiitaPage />} />
         <Route path="/hatena-articles" element={<HatenaPage />} />
         <Route path="/article-editor-page" element={<ArticleEditorPage />} />
         <Route path="/route-map" element={<RouteMapPage />} />
+        <Route path="/feed-articles" element={<FeedArticlesPage />} />
       </Routes>
     </BrowserRouter>
   )
 }
-
 export default App
