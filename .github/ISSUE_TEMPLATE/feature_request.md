@@ -9,16 +9,29 @@ assignees: ''
 
 ### 🚀 Feature Request
 **概要**  
- - XXX
+ - xxxを使用した機能の実装
+   - xxxを使用してyyyyする機能
 
 **目的・背景**  
- - XXX
+ - xxxができるようにしたい
+   - yyy(xxxの詳細)
 
 **実装方針**  
- - XXX
+ - backend (GO)
+   - clean architecture
+   - xxx
+ - frontend (React)
+   - xxx
 
 **完了条件**  
- - XXX
+ - backend (GO)
+   - postmanでapiを確認
+     - http://localhost:8080/XXX (GET) 
+     - http://localhost:8080/XXX (POST) 
+     - http://localhost:8080/XXX (PUT) 
+     - http://localhost:8080/XXX (DELETE) 
+ - frontend (React)
+   - ブラウザ上でXXXを確認
 
 **備考**  
- - XXX
+ - none
