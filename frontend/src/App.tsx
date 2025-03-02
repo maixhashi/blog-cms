@@ -10,6 +10,7 @@ import { CsrfToken } from './types'
 import { QiitaPage } from './pages/QiitaPage'
 import { ArticleEditorPage } from './pages/ArticleEditorPage'
 import { HatenaPage } from './pages/HatenaPage'
+import RouteMapPage from './pages/RouteMapPage'
 
 function App() {
   useEffect(() => {
@@ -33,6 +34,7 @@ function App() {
         <Route path="/qiita-articles" element={<QiitaPage />} />
         <Route path="/hatena-articles" element={<HatenaPage />} />
         <Route path="/article-editor-page" element={<ArticleEditorPage />} />
+        <Route path="/route-map" element={<RouteMapPage />} />
       </Routes>
     </BrowserRouter>
   )
