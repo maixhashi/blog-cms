@@ -50,3 +50,13 @@ export type QiitaArticle = {
   created_at: string
   user: QiitaUser
 }
+
+export type Article = {
+  id: number
+  title: string
+  content: string
+  published: boolean
+  tags: string
+  created_at: Date | string
+  updated_at: Date | string
+}

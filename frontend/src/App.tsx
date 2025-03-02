@@ -4,6 +4,7 @@ import { Auth } from './components/Auth'
 import { Todo } from './components/Todo'
 import { Feed } from './components/Feed'
 import { ExternalAPIManager } from './components/ExternalAPIManager'
+import { ArticleManager } from './components/ArticleManager'
 import axios from 'axios'
 import { CsrfToken } from './types'
 import { QiitaPage } from './pages/QiitaPage'
@@ -27,6 +28,7 @@ function App() {
         <Route path="/todo" element={<Todo />} />
         <Route path="/feed" element={<Feed />} />
         <Route path="/external-api-manager" element={<ExternalAPIManager />} />
+        <Route path="/article-manager" element={<ArticleManager />} />
         <Route path="/qiita-articles" element={<QiitaPage />} />
         <Route path="/article-editor-page" element={<ArticleEditorPage />} />
       </Routes>
