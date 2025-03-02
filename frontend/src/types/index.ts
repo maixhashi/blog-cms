@@ -60,3 +60,13 @@ export type Article = {
   created_at: Date | string
   updated_at: Date | string
 }
+
+export interface HatenaArticle {
+  id: string;
+  title: string;
+  url: string;
+  summary: string;
+  categories: string[];
+  published_at: string;
+  author: string;
+}

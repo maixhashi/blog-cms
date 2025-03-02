@@ -10,7 +10,14 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
-func NewRouter(uc controller.IUserController, tc controller.ITaskController, fc controller.IFeedController, ac controller.IExternalAPIController, qc controller.IQiitaController, artc controller.IArticleController) *echo.Echo {
+func NewRouter(
+	uc controller.IUserController,
+	tc controller.ITaskController,
+	fc controller.IFeedController,
+	ac controller.IExternalAPIController,
+	qc controller.IQiitaController,
+	hc controller.IHatenaController,
+	artc controller.IArticleController) *echo.Echo {
 	e := echo.New()
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"http://localhost:3000", os.Getenv("FE_URL")},
@@ -76,6 +83,15 @@ func NewRouter(uc controller.IUserController, tc controller.ITaskController, fc 
 	}))
 	q.GET("/articles", qc.GetQiitaArticles)
 	q.GET("/articles/:id", qc.GetQiitaArticleByID)
+	
+	// エンドポイント設定
+	hatena := e.Group("/hatena")
+	hatena.Use(echojwt.WithConfig(echojwt.Config{
+		SigningKey:  []byte(os.Getenv("SECRET")),
+		TokenLookup: "cookie:token",
+	}))
+	hatena.GET("", hc.GetHatenaArticles)
+	hatena.GET("/:id", hc.GetHatenaArticleByID)
 
 	// 記事関連のルート
 	art := e.Group("/articles")

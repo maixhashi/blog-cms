@@ -1,0 +1,74 @@
+.hatena-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.hatena-header {
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: #333;
+}
+
+.hatena-list {
+  list-style: none;
+  padding: 0;
+}
+
+.hatena-item {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.hatena-title {
+  margin: 0 0 12px 0;
+  font-size: 18px;
+}
+
+.hatena-title a {
+  color: #3366FF;
+  text-decoration: none;
+}
+
+.hatena-title a:hover {
+  text-decoration: underline;
+}
+
+.hatena-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.hatena-info {
+  font-size: 14px;
+  color: #666;
+}
+
+.hatena-date {
+  margin-right: 12px;
+}
+
+.hatena-author {
+  font-style: italic;
+}
+
+.hatena-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.hatena-tag {
+  background-color: #f1f8ff;
+  color: #0366d6;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+}

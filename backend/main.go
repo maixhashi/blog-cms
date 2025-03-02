@@ -48,6 +48,10 @@ func main() {
 	qiitaUsecase := usecase.NewQiitaUsecase(qiitaRepository)
 	qiitaController := controller.NewQiitaController(qiitaUsecase)
 
-	e := router.NewRouter(userController, taskController, feedController, externalAPIController, qiitaController, articleController)
+	hatenaRepository := repository.NewHatenaRepository("https://tech.smarthr.jp/feed?exclude_body=1")
+	hatenaUsecase := usecase.NewHatenaUsecase(hatenaRepository)
+	hatenaController := controller.NewHatenaController(hatenaUsecase)
+
+	e := router.NewRouter(userController, taskController, feedController, externalAPIController, qiitaController, hatenaController, articleController)
 	e.Logger.Fatal(e.Start(":8080"))
 }

@@ -9,6 +9,7 @@ import axios from 'axios'
 import { CsrfToken } from './types'
 import { QiitaPage } from './pages/QiitaPage'
 import { ArticleEditorPage } from './pages/ArticleEditorPage'
+import { HatenaPage } from './pages/HatenaPage'
 
 function App() {
   useEffect(() => {
@@ -30,6 +31,7 @@ function App() {
         <Route path="/external-api-manager" element={<ExternalAPIManager />} />
         <Route path="/article-manager" element={<ArticleManager />} />
         <Route path="/qiita-articles" element={<QiitaPage />} />
+        <Route path="/hatena-articles" element={<HatenaPage />} />
         <Route path="/article-editor-page" element={<ArticleEditorPage />} />
       </Routes>
     </BrowserRouter>
