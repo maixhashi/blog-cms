@@ -3,11 +3,10 @@ package repository
 import (
 	"encoding/xml"
 	"fmt"
+	"go-react-app/model"
 	"io"
 	"net/http"
 	"time"
-
-	"go-react-app/model"
 )
 
 type IHatenaRepository interface {
@@ -19,7 +18,11 @@ type hatenaRepository struct {
 	feedURL string
 }
 
-// RSS/Atom用の構造体
+func NewHatenaRepository(feedURL string) IHatenaRepository {
+	return &hatenaRepository{feedURL: feedURL}
+}
+
+// XMLフィードの構造体
 type Feed struct {
 	XMLName xml.Name `xml:"feed"`
 	Entries []Entry  `xml:"entry"`
@@ -28,71 +31,73 @@ type Feed struct {
 type Entry struct {
 	ID        string    `xml:"id"`
 	Title     string    `xml:"title"`
-	Link      Link      `xml:"link"`
+	Links     []struct {
+		Href string `xml:"href,attr"`
+		Rel  string `xml:"rel,attr,omitempty"`
+	} `xml:"link"`
+	Summary   struct {
+		Type    string `xml:"type,attr"`
+		Content string `xml:",chardata"`
+	} `xml:"summary"`
 	Published time.Time `xml:"published"`
 	Updated   time.Time `xml:"updated"`
-	Summary   string    `xml:"summary"`
-	Content   string    `xml:"content"`
-	Author    Author    `xml:"author"`
-	Categories []Category `xml:"category"`
-}
-
-type Link struct {
-	Href string `xml:"href,attr"`
-}
-
-type Author struct {
-	Name string `xml:"name"`
-}
-
-type Category struct {
-	Term string `xml:"term,attr"`
-}
-
-func NewHatenaRepository() IHatenaRepository {
-	return &hatenaRepository{
-		feedURL: "https://tech.smarthr.jp/feed", // SmartHRのフィードURL
-	}
+	Author    struct {
+		Name string `xml:"name"`
+	} `xml:"author"`
+	Content   struct {
+		Type    string `xml:"type,attr"`
+		Content string `xml:",chardata"`
+	} `xml:"content"`
+	Category  []struct {
+		Term string `xml:"term,attr"`
+	} `xml:"category"`
 }
 
 func (hr *hatenaRepository) GetHatenaArticles() ([]model.HatenaArticle, error) {
 	resp, err := http.Get(hr.feedURL)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("はてなフィードの取得に失敗しました: %w", err)
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("feed request failed with status code: %d", resp.StatusCode)
-	}
-
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("レスポンスボディの読み込みに失敗しました: %w", err)
 	}
 
 	var feed Feed
 	if err := xml.Unmarshal(body, &feed); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("XMLのパースに失敗しました: %w", err)
 	}
 
 	var articles []model.HatenaArticle
 	for _, entry := range feed.Entries {
-		categories := make([]string, len(entry.Categories))
-		for i, category := range entry.Categories {
+		// カテゴリの配列を作成
+		categories := make([]string, len(entry.Category))
+		for i, category := range entry.Category {
 			categories[i] = category.Term
+		}
+
+		// 記事URLを取得
+		var articleURL string
+		for _, link := range entry.Links {
+			// rel属性がない、またはrel="alternate"のリンクを記事URLとして選択
+			if link.Rel == "" || link.Rel == "alternate" {
+				articleURL = link.Href
+				break
+			}
 		}
 
 		article := model.HatenaArticle{
 			ID:          entry.ID,
 			Title:       entry.Title,
-			URL:         entry.Link.Href,
-			Content:     entry.Content,
-			Summary:     entry.Summary,
+			URL:         articleURL,
+			Summary:     entry.Summary.Content,
 			Categories:  categories,
 			PublishedAt: entry.Published,
 			UpdatedAt:   entry.Updated,
 			Author:      entry.Author.Name,
+			Content:     entry.Content.Content,
 		}
 		articles = append(articles, article)
 	}
@@ -112,5 +117,5 @@ func (hr *hatenaRepository) GetHatenaArticleByID(id string) (model.HatenaArticle
 		}
 	}
 
-	return model.HatenaArticle{}, fmt.Errorf("article with ID %s not found", id)
+	return model.HatenaArticle{}, fmt.Errorf("記事が見つかりません: %s", id)
 }

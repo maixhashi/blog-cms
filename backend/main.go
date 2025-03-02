@@ -48,7 +48,7 @@ func main() {
 	qiitaUsecase := usecase.NewQiitaUsecase(qiitaRepository)
 	qiitaController := controller.NewQiitaController(qiitaUsecase)
 
-	hatenaRepository := repository.NewHatenaRepository()
+	hatenaRepository := repository.NewHatenaRepository("https://tech.smarthr.jp/feed?exclude_body=1")
 	hatenaUsecase := usecase.NewHatenaUsecase(hatenaRepository)
 	hatenaController := controller.NewHatenaController(hatenaUsecase)
 
