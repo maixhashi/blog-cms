@@ -12,6 +12,24 @@ import (
 type IFeedArticleController interface {
 	GetArticlesByFeedID(c echo.Context) error
 	GetArticleByID(c echo.Context) error
+	GetAllArticles(c echo.Context) error // 追加
+}
+
+// 実装を追加
+func (fac *feedArticleController) GetAllArticles(c echo.Context) error {
+	// JWTトークンからユーザーIDを取得
+	user := c.Get("user").(*jwt.Token)
+	claims := user.Claims.(jwt.MapClaims)
+	userId := uint(claims["user_id"].(float64))
+
+	// すべての記事を取得
+	articles, err := fac.fau.GetAllArticles(userId)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"message": err.Error(),
+		})
+	}
+	return c.JSON(http.StatusOK, articles)
 }
 
 type feedArticleController struct {

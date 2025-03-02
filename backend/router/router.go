@@ -114,6 +114,7 @@ func NewRouter(
 	}))
 	fa.GET("/:feedId", fac.GetArticlesByFeedID)
 	fa.GET("/:feedId/:articleId", fac.GetArticleByID)
+	fa.GET("", fac.GetAllArticles)
 
 	return e
 }

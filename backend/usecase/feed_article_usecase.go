@@ -8,8 +8,32 @@ import (
 type IFeedArticleUsecase interface {
 	GetArticlesByFeedID(userId uint, feedID uint) ([]model.FeedArticleResponse, error)
 	GetArticleByID(userId uint, feedID uint, articleID string) (model.FeedArticleResponse, error)
+	GetAllArticles(userId uint) ([]model.FeedArticleResponse, error) // 追加
 }
 
+func (fau *feedArticleUsecase) GetAllArticles(userId uint) ([]model.FeedArticleResponse, error) {
+	// リポジトリ層からすべての記事を取得
+	articles, err := fau.far.GetAllArticles(userId)
+	if err != nil {
+		return nil, err
+	}
+
+	var response []model.FeedArticleResponse
+	for _, article := range articles {
+		response = append(response, model.FeedArticleResponse{
+			ID:          article.ID,
+			FeedID:      article.FeedID,
+			Title:       article.Title,
+			URL:         article.URL,
+			Summary:     article.Summary,
+			Categories:  article.Categories,
+			PublishedAt: article.PublishedAt,
+			Author:      article.Author,
+		})
+	}
+
+	return response, nil
+}
 type feedArticleUsecase struct {
 	far repository.IFeedArticleRepository
 }

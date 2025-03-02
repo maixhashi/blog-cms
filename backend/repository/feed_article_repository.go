@@ -11,8 +11,31 @@ import (
 type IFeedArticleRepository interface {
 	GetArticlesByFeedID(userId uint, feedID uint) ([]model.FeedArticle, error)
 	GetArticleByID(userId uint, feedID uint, articleID string) (model.FeedArticle, error)
+	GetAllArticles(userId uint) ([]model.FeedArticle, error) // 追加
 }
 
+func (far *feedArticleRepository) GetAllArticles(userId uint) ([]model.FeedArticle, error) {
+	// ユーザーのすべてのフィードを取得
+	var feeds []model.Feed
+	if err := far.feedRepository.GetAllFeeds(&feeds, userId); err != nil {
+		return nil, fmt.Errorf("フィードの取得に失敗しました: %w", err)
+	}
+	
+	var allArticles []model.FeedArticle
+	
+	// 各フィードの記事を取得して結合
+	for _, feed := range feeds {
+		articles, err := far.GetArticlesByFeedID(userId, feed.ID)
+		if err != nil {
+			// エラーをログに記録するが、処理は続行
+			fmt.Printf("フィードID %d の記事取得に失敗: %v\n", feed.ID, err)
+			continue
+		}
+		allArticles = append(allArticles, articles...)
+	}
+	
+	return allArticles, nil
+}
 type feedArticleRepository struct {
 	feedRepository IFeedRepository
 }
