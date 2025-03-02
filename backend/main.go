@@ -52,6 +52,12 @@ func main() {
 	hatenaUsecase := usecase.NewHatenaUsecase(hatenaRepository)
 	hatenaController := controller.NewHatenaController(hatenaUsecase)
 
-	e := router.NewRouter(userController, taskController, feedController, externalAPIController, qiitaController, hatenaController, articleController)
+	// FeedArticle関連の依存関係を設定
+	feedArticleRepository := repository.NewFeedArticleRepository(feedRepository)
+	feedArticleUsecase := usecase.NewFeedArticleUsecase(feedArticleRepository)
+	feedArticleController := controller.NewFeedArticleController(feedArticleUsecase)
+
+	e := router.NewRouter(userController, taskController, feedController, externalAPIController, 
+		qiitaController, hatenaController, articleController, feedArticleController)
 	e.Logger.Fatal(e.Start(":8080"))
 }

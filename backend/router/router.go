@@ -17,7 +17,8 @@ func NewRouter(
 	ac controller.IExternalAPIController,
 	qc controller.IQiitaController,
 	hc controller.IHatenaController,
-	artc controller.IArticleController) *echo.Echo {
+	artc controller.IArticleController,
+	fac controller.IFeedArticleController) *echo.Echo {
 	e := echo.New()
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"http://localhost:3000", os.Getenv("FE_URL")},
@@ -104,6 +105,15 @@ func NewRouter(
 	art.POST("", artc.CreateArticle)
 	art.PUT("/:articleId", artc.UpdateArticle)
 	art.DELETE("/:articleId", artc.DeleteArticle)
+
+	// FeedArticle関連のルート
+	fa := e.Group("/feed-articles")
+	fa.Use(echojwt.WithConfig(echojwt.Config{
+		SigningKey:  []byte(os.Getenv("SECRET")),
+		TokenLookup: "cookie:token",
+	}))
+	fa.GET("/:feedId", fac.GetArticlesByFeedID)
+	fa.GET("/:feedId/:articleId", fac.GetArticleByID)
 
 	return e
 }
