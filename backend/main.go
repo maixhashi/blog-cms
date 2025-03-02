@@ -38,10 +38,16 @@ func main() {
 	externalAPIUsecase := usecase.NewExternalAPIUsecase(externalAPIRepository, externalAPIValidator)
 	externalAPIController := controller.NewExternalAPIController(externalAPIUsecase)
 
+	// 記事のCRUD機能
+	articleValidator := validator.NewArticleValidator()
+	articleRepository := repository.NewArticleRepository(db)
+	articleUsecase := usecase.NewArticleUsecase(articleRepository, articleValidator)
+	articleController := controller.NewArticleController(articleUsecase)
+
 	qiitaRepository := repository.NewQiitaRepository()
 	qiitaUsecase := usecase.NewQiitaUsecase(qiitaRepository)
 	qiitaController := controller.NewQiitaController(qiitaUsecase)
 
-	e := router.NewRouter(userController, taskController, feedController, externalAPIController, qiitaController)
+	e := router.NewRouter(userController, taskController, feedController, externalAPIController, qiitaController, articleController)
 	e.Logger.Fatal(e.Start(":8080"))
 }

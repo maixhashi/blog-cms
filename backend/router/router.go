@@ -10,7 +10,7 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
-func NewRouter(uc controller.IUserController, tc controller.ITaskController, fc controller.IFeedController, ac controller.IExternalAPIController, qc controller.IQiitaController) *echo.Echo {
+func NewRouter(uc controller.IUserController, tc controller.ITaskController, fc controller.IFeedController, ac controller.IExternalAPIController, qc controller.IQiitaController, artc controller.IArticleController) *echo.Echo {
 	e := echo.New()
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"http://localhost:3000", os.Getenv("FE_URL")},
@@ -77,6 +77,17 @@ func NewRouter(uc controller.IUserController, tc controller.ITaskController, fc 
 	q.GET("/articles", qc.GetQiitaArticles)
 	q.GET("/articles/:id", qc.GetQiitaArticleByID)
 
+	// 記事関連のルート
+	art := e.Group("/articles")
+	art.Use(echojwt.WithConfig(echojwt.Config{
+		SigningKey:  []byte(os.Getenv("SECRET")),
+		TokenLookup: "cookie:token",
+	}))
+	art.GET("", artc.GetAllArticles)
+	art.GET("/:articleId", artc.GetArticleById)
+	art.POST("", artc.CreateArticle)
+	art.PUT("/:articleId", artc.UpdateArticle)
+	art.DELETE("/:articleId", artc.DeleteArticle)
+
 	return e
 }
-
