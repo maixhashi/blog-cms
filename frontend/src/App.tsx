@@ -11,6 +11,7 @@ import { QiitaPage } from './pages/QiitaPage'
 import { ArticleEditorPage } from './pages/ArticleEditorPage'
 import { HatenaPage } from './pages/HatenaPage'
 import RouteMapPage from './pages/RouteMapPage'
+import { FeedArticlesPage } from './pages/FeedArticlesPage'
 
 function App() {
   useEffect(() => {
@@ -36,9 +37,9 @@ function App() {
         <Route path="/hatena-articles" element={<HatenaPage />} />
         <Route path="/article-editor-page" element={<ArticleEditorPage />} />
         <Route path="/route-map" element={<RouteMapPage />} />
+        <Route path="/feed-articles" element={<FeedArticlesPage />} />
       </Routes>
     </BrowserRouter>
   )
 }
-
 export default App

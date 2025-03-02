@@ -10,7 +10,7 @@ export const routes: RouteNode[] = [
     id: 'home',
     name: 'ホーム画面',
     path: '/',
-    children: ['external-apis', 'qiita-articles', 'hatena-articles']
+    children: ['external-apis', 'qiita-articles', 'hatena-articles', 'feed-articles']
   },
   {
     id: 'external-apis',
@@ -41,6 +41,18 @@ export const routes: RouteNode[] = [
     name: '記事詳細',
     path: '/articles/:id',
     children: ['qiita-articles', 'hatena-articles']
+  },
+  {
+    id: 'feed-articles',
+    name: 'フィード記事一覧',
+    path: '/feed-articles',
+    children: ['feed-article-detail']
+  },
+  {
+    id: 'feed-article-detail',
+    name: 'フィード記事詳細',
+    path: '/feed-articles/:feedId/:id',
+    children: ['feed-articles']
   }
   // 他の画面も同様に追加
 ];
