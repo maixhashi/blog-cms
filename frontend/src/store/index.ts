@@ -1,5 +1,4 @@
 import { create } from 'zustand'
-import { ExternalAPI, Feed } from '../types'
 
 type State = {
   // Task関連
@@ -27,21 +26,38 @@ type State = {
     id: number
     title: string
     url: string
-    site_url: string  // 追加
-    description: string  // 追加
-    last_fetched_at: Date | string  // 追加
+    site_url: string
+    description: string
+    last_fetched_at: Date | string
   }
   updateEditedFeed: (payload: {
     id: number
     title: string
     url: string
-    site_url: string  // 追加
-    description: string  // 追加
-    last_fetched_at: Date | string  // 追加
+    site_url: string
+    description: string
+    last_fetched_at: Date | string
   }) => void
   resetEditedFeed: () => void
   selectedFeedId: number | null
   setSelectedFeedId: (id: number | null) => void
+  
+  // Article関連
+  editedArticle: {
+    id: number
+    title: string
+    content: string
+    published: boolean
+    tags: string
+  }
+  updateEditedArticle: (payload: {
+    id: number
+    title: string
+    content: string
+    published: boolean
+    tags: string
+  }) => void
+  resetEditedArticle: () => void
 }
 
 const useStore = create<State>((set) => ({
@@ -70,9 +86,9 @@ const useStore = create<State>((set) => ({
     id: 0, 
     title: '', 
     url: '', 
-    site_url: '',  // 追加
-    description: '',  // 追加
-    last_fetched_at: new Date()  // 追加
+    site_url: '',
+    description: '',
+    last_fetched_at: new Date()
   },
   updateEditedFeed: (payload) =>
     set({
@@ -84,15 +100,38 @@ const useStore = create<State>((set) => ({
         id: 0, 
         title: '', 
         url: '', 
-        site_url: '',  // 追加
-        description: '',  // 追加
-        last_fetched_at: new Date()  // 追加
+        site_url: '',
+        description: '',
+        last_fetched_at: new Date()
       },
     }),
   selectedFeedId: null,
   setSelectedFeedId: (id) =>
     set({
       selectedFeedId: id,
+    }),
+    
+  // Article関連
+  editedArticle: {
+    id: 0,
+    title: '',
+    content: '',
+    published: false,
+    tags: ''
+  },
+  updateEditedArticle: (payload) =>
+    set({
+      editedArticle: payload,
+    }),
+  resetEditedArticle: () =>
+    set({
+      editedArticle: {
+        id: 0,
+        title: '',
+        content: '',
+        published: false,
+        tags: ''
+      }
     }),
 }))
 
