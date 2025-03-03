@@ -1,6 +1,7 @@
 package validator
 
 import (
+	"fmt"
 	"go-react-app/model"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
@@ -21,7 +22,9 @@ func (tv *taskValidator) TaskValidate(task model.Task) error {
 		validation.Field(
 			&task.Title,
 			validation.Required.Error("title is required"),
-			validation.RuneLength(1, 10).Error("limited max 10 char"),
+			validation.RuneLength(1, model.TaskTitleMaxLength).Error(
+				fmt.Sprintf("limited max %d char", model.TaskTitleMaxLength),
+			),
 		),
 	)
 }
