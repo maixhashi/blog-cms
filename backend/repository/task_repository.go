@@ -25,15 +25,19 @@ func NewTaskRepository(db *gorm.DB) ITaskRepository {
 }
 
 func (tr *taskRepository) GetAllTasks(tasks *[]model.Task, userId uint) error {
-	if err := tr.db.Joins("User").Where("user_id=?", userId).Order("created_at").Find(tasks).Error; err != nil {
+	if err := tr.db.Joins("User").Where("user_id=?", userId).Order("tasks.created_at").Find(tasks).Error; err != nil {
 		return err
 	}
 	return nil
 }
 
 func (tr *taskRepository) GetTaskById(task *model.Task, userId uint, taskId uint) error {
-	if err := tr.db.Joins("User").Where("user_id=?", userId).First(task, taskId).Error; err != nil {
-		return err
+	result := tr.db.Joins("User").Where("user_id=?", userId).First(task, taskId)
+	if result.Error != nil {
+		return result.Error
+	}
+	if result.RowsAffected == 0 {
+		return fmt.Errorf("task not found")
 	}
 	return nil
 }
