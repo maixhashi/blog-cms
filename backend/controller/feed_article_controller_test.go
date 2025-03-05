@@ -18,56 +18,56 @@ import (
 
 // テスト用の共通変数 - 変数名を変更して衝突を避ける
 var (
-	articleDB                *gorm.DB
+	feedArticleDB                *gorm.DB
 	articleFeedRepo          repository.IFeedRepository
 	articleFeedArticleRepo   repository.IFeedArticleRepository
 	articleFeedArticleUcase  usecase.IFeedArticleUsecase
 	feedArticleCtrl          IFeedArticleController // 変数名を変更
-	articleTestUser          model.User
-	articleOtherUser         model.User
+	feedArticleTestUser          model.User
+	feedArticleOtherUser         model.User
 	articleTestFeed          model.Feed
 	articleOtherUserFeed     model.Feed
 )
 
 // テストセットアップ関数
-func setupArticleControllerTest() {
+func setupFeedArticleControllerTest() {
 	// テストごとにデータベースをクリーンアップ
-	if articleDB != nil {
-		testutils.CleanupTestDB(articleDB)
+	if feedArticleDB != nil {
+		testutils.CleanupTestDB(feedArticleDB)
 	} else {
 		// 初回のみデータベース接続を作成
-		articleDB = testutils.SetupTestDB()
-		articleFeedRepo = repository.NewFeedRepository(articleDB)
+		feedArticleDB = testutils.SetupTestDB()
+		articleFeedRepo = repository.NewFeedRepository(feedArticleDB)
 		articleFeedArticleRepo = repository.NewFeedArticleRepository(articleFeedRepo)
 		articleFeedArticleUcase = usecase.NewFeedArticleUsecase(articleFeedArticleRepo)
 		feedArticleCtrl = NewFeedArticleController(articleFeedArticleUcase) // 変数名を変更
 	}
 	
 	// テストユーザーを作成
-	articleTestUser = testutils.CreateTestUser(articleDB)
-	articleOtherUser = testutils.CreateOtherUser(articleDB)
+	feedArticleTestUser = testutils.CreateTestUser(feedArticleDB)
+	feedArticleOtherUser = testutils.CreateOtherUser(feedArticleDB)
 	
 	// テスト用フィードを作成 - 実際のRSSフィードURLを使用
 	articleTestFeed = model.Feed{
 		Title:       "Test Feed",
 		URL:         "https://blog.golang.org/feed.atom", // Golangの公式ブログフィード
 		Description: "Test Feed Description",
-		UserId:      articleTestUser.ID,
+		UserId:      feedArticleTestUser.ID,
 	}
-	articleDB.Create(&articleTestFeed)
+	feedArticleDB.Create(&articleTestFeed)
 	
 	// 別ユーザーのテスト用フィードを作成
 	articleOtherUserFeed = model.Feed{
 		Title:       "Other User Feed",
 		URL:         "https://blog.golang.org/feed.atom", // 同じURLでも別ユーザー
 		Description: "Other User Feed Description",
-		UserId:      articleOtherUser.ID,
+		UserId:      feedArticleOtherUser.ID,
 	}
-	articleDB.Create(&articleOtherUserFeed)
+	feedArticleDB.Create(&articleOtherUserFeed)
 }
 
 // JWT認証をセットアップするヘルパー関数
-func setupArticleEchoWithJWT(userId uint) (*echo.Echo, echo.Context, *httptest.ResponseRecorder) {
+func setupFeedArticleEchoWithJWT(userId uint) (*echo.Echo, echo.Context, *httptest.ResponseRecorder) {
 	e := echo.New()
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	rec := httptest.NewRecorder()
@@ -86,7 +86,7 @@ func setupArticleEchoWithJWT(userId uint) (*echo.Echo, echo.Context, *httptest.R
 
 // フィードIDパラメータを持つリクエストコンテキストを設定するヘルパー関数
 func setupArticleEchoWithFeedId(userId uint, feedId uint) (*echo.Echo, echo.Context, *httptest.ResponseRecorder) {
-	e, c, rec := setupArticleEchoWithJWT(userId)
+	e, c, rec := setupFeedArticleEchoWithJWT(userId)
 	c.SetParamNames("feedId")
 	c.SetParamValues(fmt.Sprintf("%d", feedId))
 	return e, c, rec
@@ -101,12 +101,12 @@ func setupArticleEchoWithFeedAndArticleId(userId uint, feedId uint, articleId st
 }
 
 func TestFeedArticleController_GetAllArticles(t *testing.T) {
-	setupArticleControllerTest()
+	setupFeedArticleControllerTest()
 	
 	t.Run("正常系", func(t *testing.T) {
 		t.Run("ユーザーの全フィードの記事を取得する", func(t *testing.T) {
 			// テスト実行
-			_, c, rec := setupArticleEchoWithJWT(articleTestUser.ID)
+			_, c, rec := setupFeedArticleEchoWithJWT(feedArticleTestUser.ID)
 			err := feedArticleCtrl.GetAllArticles(c) // 変数名を変更
 			
 			// 検証
@@ -149,12 +149,12 @@ func TestFeedArticleController_GetAllArticles(t *testing.T) {
 }
 
 func TestFeedArticleController_GetArticlesByFeedID(t *testing.T) {
-	setupArticleControllerTest()
+	setupFeedArticleControllerTest()
 	
 	t.Run("正常系", func(t *testing.T) {
 		t.Run("フィードIDから記事一覧を取得する", func(t *testing.T) {
 			// テスト実行
-			_, c, rec := setupArticleEchoWithFeedId(articleTestUser.ID, articleTestFeed.ID)
+			_, c, rec := setupArticleEchoWithFeedId(feedArticleTestUser.ID, articleTestFeed.ID)
 			err := feedArticleCtrl.GetArticlesByFeedID(c) // 変数名を変更
 			
 			// 検証
@@ -194,7 +194,7 @@ func TestFeedArticleController_GetArticlesByFeedID(t *testing.T) {
 			// 無効なフィードID
 			invalidFeedID := uint(99999)
 			
-			_, c, rec := setupArticleEchoWithFeedId(articleTestUser.ID, invalidFeedID)
+			_, c, rec := setupArticleEchoWithFeedId(feedArticleTestUser.ID, invalidFeedID)
 			err := feedArticleCtrl.GetArticlesByFeedID(c) // 変数名を変更
 			
 			// コントローラーはJSONレスポンスを返すのでエラーオブジェクトを返さない
@@ -210,7 +210,7 @@ func TestFeedArticleController_GetArticlesByFeedID(t *testing.T) {
 		
 		t.Run("他のユーザーのフィードにアクセスするとエラーを返す", func(t *testing.T) {
 			// 別ユーザーのフィードIDを指定
-			_, c, rec := setupArticleEchoWithFeedId(articleTestUser.ID, articleOtherUserFeed.ID)
+			_, c, rec := setupArticleEchoWithFeedId(feedArticleTestUser.ID, articleOtherUserFeed.ID)
 			err := feedArticleCtrl.GetArticlesByFeedID(c) // 変数名を変更
 			
 			// コントローラーはJSONレスポンスを返すのでエラーオブジェクトを返さない
@@ -227,14 +227,14 @@ func TestFeedArticleController_GetArticlesByFeedID(t *testing.T) {
 }
 
 func TestFeedArticleController_GetArticleByID(t *testing.T) {
-	setupArticleControllerTest()
+	setupFeedArticleControllerTest()
 	
 	// このテストは外部依存があるため、先に記事一覧を取得してから特定の記事IDをテストに使用
 	var testArticleID string
 	
 	// 事前に記事を取得してテストに使用する記事IDを決定
 	t.Run("事前準備", func(t *testing.T) {
-		_, c, rec := setupArticleEchoWithFeedId(articleTestUser.ID, articleTestFeed.ID)
+		_, c, rec := setupArticleEchoWithFeedId(feedArticleTestUser.ID, articleTestFeed.ID)
 		err := feedArticleCtrl.GetArticlesByFeedID(c) // 変数名を変更
 		
 		if err != nil || rec.Code != http.StatusOK {
@@ -263,7 +263,7 @@ func TestFeedArticleController_GetArticleByID(t *testing.T) {
 		t.Run("正常系", func(t *testing.T) {
 			t.Run("フィードIDと記事IDから特定の記事を取得する", func(t *testing.T) {
 				// テスト実行
-				_, c, rec := setupArticleEchoWithFeedAndArticleId(articleTestUser.ID, articleTestFeed.ID, testArticleID)
+				_, c, rec := setupArticleEchoWithFeedAndArticleId(feedArticleTestUser.ID, articleTestFeed.ID, testArticleID)
 				err := feedArticleCtrl.GetArticleByID(c)
 				
 				// 検証
@@ -300,7 +300,7 @@ func TestFeedArticleController_GetArticleByID(t *testing.T) {
 				// 存在しない記事ID
 				nonExistingArticleID := "non-existing-article-id"
 				
-				_, c, rec := setupArticleEchoWithFeedAndArticleId(articleTestUser.ID, articleTestFeed.ID, nonExistingArticleID)
+				_, c, rec := setupArticleEchoWithFeedAndArticleId(feedArticleTestUser.ID, articleTestFeed.ID, nonExistingArticleID)
 				err := feedArticleCtrl.GetArticleByID(c)
 				
 				// コントローラーはJSONレスポンスを返すのでエラーオブジェクトを返さない
@@ -316,7 +316,7 @@ func TestFeedArticleController_GetArticleByID(t *testing.T) {
 			
 			t.Run("他のユーザーのフィードの記事にアクセスするとエラーを返す", func(t *testing.T) {
 				// 存在する記事IDを使って別ユーザーのフィードからアクセス
-				_, c, rec := setupArticleEchoWithFeedAndArticleId(articleTestUser.ID, articleOtherUserFeed.ID, testArticleID)
+				_, c, rec := setupArticleEchoWithFeedAndArticleId(feedArticleTestUser.ID, articleOtherUserFeed.ID, testArticleID)
 				err := feedArticleCtrl.GetArticleByID(c)
 				
 				// コントローラーはJSONレスポンスを返すのでエラーオブジェクトを返さない
@@ -340,7 +340,7 @@ func TestFeedArticleController_GetArticleByID(t *testing.T) {
 				// JWTトークンを設定
 				token := jwt.New(jwt.SigningMethodHS256)
 				claims := token.Claims.(jwt.MapClaims)
-				claims["user_id"] = float64(articleTestUser.ID)
+				claims["user_id"] = float64(feedArticleTestUser.ID)
 				c.Set("user", token)
 				
 				// 無効なフィードIDパラメータを設定
