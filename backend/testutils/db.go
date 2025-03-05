@@ -1,59 +1,69 @@
 package testutils
 
 import (
+	"fmt"
 	"go-react-app/model"
 	"log"
-	"os"
+	"math/rand"
+	"time"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 )
 
-// テスト用データベースを設定する
+// ランダムなDB名を生成し、テスト間で競合しないようにする
+func generateRandomDBName() string {
+	rand.Seed(time.Now().UnixNano())
+	return fmt.Sprintf("file:memdb%d?mode=memory&cache=shared", rand.Int())
+}
+
+// テスト用のデータベース接続を設定する
 func SetupTestDB() *gorm.DB {
-	// テスト用のSQLiteインメモリデータベースを使用
-	db, err := gorm.Open(sqlite.Open("file::memory:?cache=shared"), &gorm.Config{
-		Logger: logger.New(
-			log.New(os.Stdout, "\r\n", log.LstdFlags),
-			logger.Config{
-				LogLevel: logger.Silent, // テスト時はログを抑制
-			},
-		),
-	})
+	// 毎回ユニークなインメモリデータベースを使用
+	dbName := generateRandomDBName()
+	db, err := gorm.Open(sqlite.Open(dbName), &gorm.Config{})
 	if err != nil {
-		log.Fatalf("Failed to connect to test database: %v", err)
+		log.Fatalf("テストデータベースの接続に失敗しました: %v", err)
 	}
 
-	// テスト用のテーブルを作成
-	db.AutoMigrate(&model.User{}, &model.Task{})
+	// テーブルのマイグレーション
+	db.AutoMigrate(&model.User{}, &model.Task{}, &model.Feed{})
 
 	return db
 }
 
-// テストユーザーの作成
+// データベースをクリーンアップする
+func CleanupTestDB(db *gorm.DB) {
+	// テーブルの全レコードを削除
+	db.Exec("DELETE FROM tasks")
+	db.Exec("DELETE FROM feeds")
+	db.Exec("DELETE FROM users")
+}
+
+// テスト用ユーザーを作成する
 func CreateTestUser(db *gorm.DB) model.User {
+	// ユニークなメールアドレスを生成
+	rand.Seed(time.Now().UnixNano())
+	email := fmt.Sprintf("test%d@example.com", rand.Int())
+	
 	user := model.User{
-		Email:    "test@example.com",
+		Email:    email,
 		Password: "password",
 	}
 	db.Create(&user)
 	return user
 }
 
-// テストユーザーの作成
+// 別のテスト用ユーザーを作成する
 func CreateOtherUser(db *gorm.DB) model.User {
+	// ユニークなメールアドレスを生成
+	rand.Seed(time.Now().UnixNano())
+	email := fmt.Sprintf("other%d@example.com", rand.Int())
+	
 	user := model.User{
-		Email:    "other@example.com",
-		Password: "otherpassword",
+		Email:    email,
+		Password: "password",
 	}
 	db.Create(&user)
 	return user
 }
-
-// テストデータのクリーンアップ
-func CleanupTestDB(db *gorm.DB) {
-	db.Exec("DELETE FROM tasks")
-	db.Exec("DELETE FROM users")
-}
-

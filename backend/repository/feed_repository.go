@@ -25,7 +25,7 @@ func NewFeedRepository(db *gorm.DB) IFeedRepository {
 }
 
 func (fr *feedRepository) GetAllFeeds(feeds *[]model.Feed, userId uint) error {
-	if err := fr.db.Joins("User").Where("user_id=?", userId).Order("created_at").Find(feeds).Error; err != nil {
+	if err := fr.db.Joins("User").Where("user_id=?", userId).Order("feeds.created_at").Find(feeds).Error; err != nil {
 		return err
 	}
 	return nil
