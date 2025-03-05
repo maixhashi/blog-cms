@@ -17,7 +17,7 @@ var (
 	feedArticleDB   *gorm.DB
 	mockFeedRepo    *MockFeedRepository
 	feedArticleRepo IFeedArticleRepository
-	articleTestUser model.User
+	feedArticleTestUser model.User
 )
 
 // フィードリポジトリのモック
@@ -97,7 +97,7 @@ func setupFeedArticleTest() {
 	feedArticleDB = testutils.SetupTestDB()
 	
 	// テストユーザーの作成
-	articleTestUser = testutils.CreateTestUser(feedArticleDB)
+	feedArticleTestUser = testutils.CreateTestUser(feedArticleDB)
 	
 	// モックフィードリポジトリの作成
 	mockFeedRepo = new(MockFeedRepository)
@@ -120,10 +120,10 @@ func TestFeedArticleRepository_GetArticlesByFeedID(t *testing.T) {
 		// GetFeedByIdのモック設定
 		mockFeed := model.Feed{
 			ID:     1,
-			UserId: articleTestUser.ID,	
+			UserId: feedArticleTestUser.ID,	
 			URL:    server.URL, // モックサーバーのURL
 		}
-		mockFeedRepo.On("GetFeedById", mock.AnythingOfType("*model.Feed"), articleTestUser.ID, uint(1)).
+		mockFeedRepo.On("GetFeedById", mock.AnythingOfType("*model.Feed"), feedArticleTestUser.ID, uint(1)).
 			Run(func(args mock.Arguments) {
 				feed := args.Get(0).(*model.Feed)
 				*feed = mockFeed
@@ -131,7 +131,7 @@ func TestFeedArticleRepository_GetArticlesByFeedID(t *testing.T) {
 			Return(mockFeed, nil)
 		
 		// テスト対象の関数を実行
-		articles, err := feedArticleRepo.GetArticlesByFeedID(articleTestUser.ID, 1)
+		articles, err := feedArticleRepo.GetArticlesByFeedID(feedArticleTestUser.ID, 1)
 		
 		// 検証
 		assert.NoError(t, err)
@@ -157,11 +157,11 @@ func TestFeedArticleRepository_GetArticlesByFeedID(t *testing.T) {
 	t.Run("異常系", func(t *testing.T) {
 		t.Run("フィード取得エラー", func(t *testing.T) {
 			// GetFeedByIdでエラーを返すようにモック設定
-			mockFeedRepo.On("GetFeedById", mock.AnythingOfType("*model.Feed"), articleTestUser.ID, uint(999)).
+			mockFeedRepo.On("GetFeedById", mock.AnythingOfType("*model.Feed"), feedArticleTestUser.ID, uint(999)).
 				Return(model.Feed{}, assert.AnError)
 			
 			// テスト対象の関数を実行
-			_, err := feedArticleRepo.GetArticlesByFeedID(articleTestUser.ID, 999)
+			_, err := feedArticleRepo.GetArticlesByFeedID(feedArticleTestUser.ID, 999)
 			
 			// エラーが返されることを検証
 			assert.Error(t, err)
@@ -188,10 +188,10 @@ func TestFeedArticleRepository_GetArticleByID(t *testing.T) {
 		// GetFeedByIdのモック設定
 		mockFeed := model.Feed{
 			ID:     1,
-			UserId: articleTestUser.ID,
+			UserId: feedArticleTestUser.ID,
 			URL:    server.URL, // モックサーバーのURL
 		}
-		mockFeedRepo.On("GetFeedById", mock.AnythingOfType("*model.Feed"), articleTestUser.ID, uint(1)).
+		mockFeedRepo.On("GetFeedById", mock.AnythingOfType("*model.Feed"), feedArticleTestUser.ID, uint(1)).
 			Run(func(args mock.Arguments) {
 				feed := args.Get(0).(*model.Feed)
 				*feed = mockFeed
@@ -199,7 +199,7 @@ func TestFeedArticleRepository_GetArticleByID(t *testing.T) {
 			Return(mockFeed, nil)
 		
 		// テスト対象の関数を実行
-		article, err := feedArticleRepo.GetArticleByID(articleTestUser.ID, 1, "article1")
+		article, err := feedArticleRepo.GetArticleByID(feedArticleTestUser.ID, 1, "article1")
 		
 		// 検証
 		assert.NoError(t, err)
@@ -229,10 +229,10 @@ func TestFeedArticleRepository_GetArticleByID(t *testing.T) {
 			// GetFeedByIdのモック設定
 			mockFeed := model.Feed{
 				ID:     1,
-				UserId: articleTestUser.ID,
+				UserId: feedArticleTestUser.ID,
 				URL:    server.URL, // 新しく作ったサーバーのURLを使用
 			}
-			mockFeedRepo.On("GetFeedById", mock.AnythingOfType("*model.Feed"), articleTestUser.ID, uint(1)).
+			mockFeedRepo.On("GetFeedById", mock.AnythingOfType("*model.Feed"), feedArticleTestUser.ID, uint(1)).
 				Run(func(args mock.Arguments) {
 					feed := args.Get(0).(*model.Feed)
 					*feed = mockFeed
@@ -240,7 +240,7 @@ func TestFeedArticleRepository_GetArticleByID(t *testing.T) {
 				Return(mockFeed, nil)
 			
 			// 存在しない記事IDでテスト
-			_, err := feedArticleRepo.GetArticleByID(articleTestUser.ID, 1, "nonexistent")
+			_, err := feedArticleRepo.GetArticleByID(feedArticleTestUser.ID, 1, "nonexistent")
 			
 			// エラーが返されることを検証
 			assert.Error(t, err)
@@ -266,10 +266,10 @@ func TestFeedArticleRepository_GetAllArticles(t *testing.T) {
 		
 		// GetAllFeedsのモック設定
 		mockFeeds := []model.Feed{
-			{ID: 1, UserId: articleTestUser.ID, URL: server.URL},
-			{ID: 2, UserId: articleTestUser.ID, URL: server.URL},
+			{ID: 1, UserId: feedArticleTestUser.ID, URL: server.URL},
+			{ID: 2, UserId: feedArticleTestUser.ID, URL: server.URL},
 		}
-		mockFeedRepo.On("GetAllFeeds", mock.AnythingOfType("*[]model.Feed"), articleTestUser.ID).
+		mockFeedRepo.On("GetAllFeeds", mock.AnythingOfType("*[]model.Feed"), feedArticleTestUser.ID).
 			Run(func(args mock.Arguments) {
 				feeds := args.Get(0).(*[]model.Feed)
 				*feeds = mockFeeds
@@ -278,7 +278,7 @@ func TestFeedArticleRepository_GetAllArticles(t *testing.T) {
 		
 		// 各フィードに対するGetFeedByIdのモック設定
 		for _, feed := range mockFeeds {
-			mockFeedRepo.On("GetFeedById", mock.AnythingOfType("*model.Feed"), articleTestUser.ID, feed.ID).
+			mockFeedRepo.On("GetFeedById", mock.AnythingOfType("*model.Feed"), feedArticleTestUser.ID, feed.ID).
 				Run(func(args mock.Arguments) {
 					feedArg := args.Get(0).(*model.Feed)
 					*feedArg = feed
@@ -287,7 +287,7 @@ func TestFeedArticleRepository_GetAllArticles(t *testing.T) {
 		}
 		
 		// テスト対象の関数を実行
-		articles, err := feedArticleRepo.GetAllArticles(articleTestUser.ID)
+		articles, err := feedArticleRepo.GetAllArticles(feedArticleTestUser.ID)
 		
 		// 検証
 		assert.NoError(t, err)
@@ -315,7 +315,7 @@ func TestFeedArticleRepository_GetAllArticles(t *testing.T) {
 			
 			// GetAllFeedsが必ずエラーを返すように設定
 			mockErr := errors.New("フィードの取得に失敗しました")
-			mockFeedRepo.On("GetAllFeeds", mock.AnythingOfType("*[]model.Feed"), articleTestUser.ID).
+			mockFeedRepo.On("GetAllFeeds", mock.AnythingOfType("*[]model.Feed"), feedArticleTestUser.ID).
 				Run(func(args mock.Arguments) {
 					// 空のスライスを設定（nilではなく）
 					feeds := args.Get(0).(*[]model.Feed)
@@ -324,7 +324,7 @@ func TestFeedArticleRepository_GetAllArticles(t *testing.T) {
 				Return(nil, mockErr)
 			
 			// テスト対象の関数を実行
-			articles, err := feedArticleRepo.GetAllArticles(articleTestUser.ID)
+			articles, err := feedArticleRepo.GetAllArticles(feedArticleTestUser.ID)
 			
 			// エラーが返されることを検証
 			assert.Error(t, err)
@@ -357,12 +357,12 @@ func TestFeedArticleRepository_GetAllArticles(t *testing.T) {
 			
 			// GetAllFeedsのモック設定 - 正常なフィードと問題のあるフィードの混在
 			mockFeeds := []model.Feed{
-				{ID: 1, UserId: articleTestUser.ID, URL: goodServer.URL},    // 正常なフィード
-				{ID: 2, UserId: articleTestUser.ID, URL: errorServer.URL},   // 問題のあるフィード
-				{ID: 3, UserId: articleTestUser.ID, URL: goodServer.URL},    // 正常なフィード
+				{ID: 1, UserId: feedArticleTestUser.ID, URL: goodServer.URL},    // 正常なフィード
+				{ID: 2, UserId: feedArticleTestUser.ID, URL: errorServer.URL},   // 問題のあるフィード
+				{ID: 3, UserId: feedArticleTestUser.ID, URL: goodServer.URL},    // 正常なフィード
 			}
 			
-			mockFeedRepo.On("GetAllFeeds", mock.AnythingOfType("*[]model.Feed"), articleTestUser.ID).
+			mockFeedRepo.On("GetAllFeeds", mock.AnythingOfType("*[]model.Feed"), feedArticleTestUser.ID).
 				Run(func(args mock.Arguments) {
 					feeds := args.Get(0).(*[]model.Feed)
 					*feeds = mockFeeds
@@ -371,7 +371,7 @@ func TestFeedArticleRepository_GetAllArticles(t *testing.T) {
 			
 			// 各フィードに対するGetFeedByIdのモック設定
 			for _, feed := range mockFeeds {
-				mockFeedRepo.On("GetFeedById", mock.AnythingOfType("*model.Feed"), articleTestUser.ID, feed.ID).
+				mockFeedRepo.On("GetFeedById", mock.AnythingOfType("*model.Feed"), feedArticleTestUser.ID, feed.ID).
 					Run(func(args mock.Arguments) {
 						feedArg := args.Get(0).(*model.Feed)
 						*feedArg = feed
@@ -380,7 +380,7 @@ func TestFeedArticleRepository_GetAllArticles(t *testing.T) {
 			}
 			
 			// テスト対象の関数を実行
-			articles, err := feedArticleRepo.GetAllArticles(articleTestUser.ID)
+			articles, err := feedArticleRepo.GetAllArticles(feedArticleTestUser.ID)
 			
 			// 正常に終了し、一部の記事が取得できることを検証
 			assert.NoError(t, err)
@@ -417,10 +417,10 @@ func TestFeedArticleRepository_GetAllArticles(t *testing.T) {
 			// GetFeedByIdのモック設定
 			mockFeed := model.Feed{
 				ID:     1,
-				UserId: articleTestUser.ID,
+				UserId: feedArticleTestUser.ID,
 				URL:    invalidXMLServer.URL,
 			}
-			mockFeedRepo.On("GetFeedById", mock.AnythingOfType("*model.Feed"), articleTestUser.ID, uint(1)).
+			mockFeedRepo.On("GetFeedById", mock.AnythingOfType("*model.Feed"), feedArticleTestUser.ID, uint(1)).
 				Run(func(args mock.Arguments) {
 					feed := args.Get(0).(*model.Feed)
 					*feed = mockFeed
@@ -428,7 +428,7 @@ func TestFeedArticleRepository_GetAllArticles(t *testing.T) {
 				Return(mockFeed, nil)
 			
 			// テスト対象の関数を実行
-			_, err := feedArticleRepo.GetArticlesByFeedID(articleTestUser.ID, 1)
+			_, err := feedArticleRepo.GetArticlesByFeedID(feedArticleTestUser.ID, 1)
 			
 			// エラーが返されることを検証
 			assert.Error(t, err)
