@@ -27,7 +27,12 @@ func SetupTestDB() *gorm.DB {
 	}
 
 	// テーブルのマイグレーション
-	db.AutoMigrate(&model.User{}, &model.Task{}, &model.Feed{})
+	db.AutoMigrate(
+		&model.User{}, 
+		&model.Task{},
+		&model.Feed{},
+		&model.Article{},
+	)
 
 	return db
 }

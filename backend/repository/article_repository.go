@@ -25,7 +25,7 @@ func NewArticleRepository(db *gorm.DB) IArticleRepository {
 }
 
 func (ar *articleRepository) GetAllArticles(articles *[]model.Article, userId uint) error {
-	if err := ar.db.Joins("User").Where("user_id=?", userId).Order("created_at DESC").Find(articles).Error; err != nil {
+	if err := ar.db.Joins("User").Where("user_id=?", userId).Order("articles.created_at DESC").Find(articles).Error; err != nil {
 		return err
 	}
 	return nil
