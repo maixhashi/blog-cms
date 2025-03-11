@@ -1,5 +1,5 @@
 import { StateCreator } from 'zustand';
-import { ArticleState } from '../types';
+import { ArticleState } from '../types/articleTypes';
 
 export const createArticleSlice: StateCreator<ArticleState> = (set) => ({
   editedArticle: {

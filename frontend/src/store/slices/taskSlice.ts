@@ -1,5 +1,5 @@
 import { StateCreator } from 'zustand';
-import { TaskState } from '../types';
+import { TaskState } from '../types/taskTypes';
 
 export const createTaskSlice: StateCreator<TaskState> = (set) => ({
   editedTask: {

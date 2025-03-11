@@ -1,5 +1,5 @@
 import { StateCreator } from 'zustand';
-import { FeedState } from '../types';
+import { FeedState } from '../types/feedTypes';
 
 export const createFeedSlice: StateCreator<FeedState> = (set) => ({
   editedFeed: { 

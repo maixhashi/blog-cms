@@ -1,5 +1,5 @@
 import { StateCreator } from 'zustand';
-import { ExternalAPIState } from '../types';
+import { ExternalAPIState } from '../types/apiTypes';
 
 export const createAPISlice: StateCreator<ExternalAPIState> = (set) => ({
   editedExternalAPI: { 
