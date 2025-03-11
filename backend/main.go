@@ -44,6 +44,12 @@ func main() {
 	articleUsecase := usecase.NewArticleUsecase(articleRepository, articleValidator)
 	articleController := controller.NewArticleController(articleUsecase)
 
+	// レイアウトのCRUD機能
+	layoutValidator := validator.NewLayoutValidator()
+	layoutRepository := repository.NewLayoutRepository(db)
+	layoutUsecase := usecase.NewLayoutUsecase(layoutRepository, layoutValidator)
+	layoutController := controller.NewLayoutController(layoutUsecase)
+
 	qiitaRepository := repository.NewQiitaRepository()
 	qiitaUsecase := usecase.NewQiitaUsecase(qiitaRepository)
 	qiitaController := controller.NewQiitaController(qiitaUsecase)
@@ -58,6 +64,6 @@ func main() {
 	feedArticleController := controller.NewFeedArticleController(feedArticleUsecase)
 
 	e := router.NewRouter(userController, taskController, feedController, externalAPIController, 
-		qiitaController, hatenaController, articleController, feedArticleController)
+		qiitaController, hatenaController, articleController, feedArticleController, layoutController)
 	e.Logger.Fatal(e.Start(":8080"))
 }
