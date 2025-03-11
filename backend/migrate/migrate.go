@@ -16,5 +16,6 @@ func main() {
 		&model.Feed{},
 		&model.ExternalAPI{},
 		&model.Article{},
+		&model.Layout{},
 	)
 }

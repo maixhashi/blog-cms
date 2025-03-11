@@ -18,7 +18,8 @@ func NewRouter(
 	qc controller.IQiitaController,
 	hc controller.IHatenaController,
 	artc controller.IArticleController,
-	fac controller.IFeedArticleController) *echo.Echo {
+	fac controller.IFeedArticleController,
+	lc controller.ILayoutController) *echo.Echo {
 	e := echo.New()
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"http://localhost:3000", os.Getenv("FE_URL")},
@@ -76,7 +77,7 @@ func NewRouter(
 	a.PUT("/:apiId", ac.UpdateExternalAPI)
 	a.DELETE("/:apiId", ac.DeleteExternalAPI)
 	
-	// 外部API関連のルート
+	// Qiita関連のルート
 	q := e.Group("/qiita")
 	q.Use(echojwt.WithConfig(echojwt.Config{
 		SigningKey:  []byte(os.Getenv("SECRET")),
@@ -85,7 +86,7 @@ func NewRouter(
 	q.GET("/articles", qc.GetQiitaArticles)
 	q.GET("/articles/:id", qc.GetQiitaArticleByID)
 	
-	// エンドポイント設定
+	// Hatena関連のルート
 	hatena := e.Group("/hatena")
 	hatena.Use(echojwt.WithConfig(echojwt.Config{
 		SigningKey:  []byte(os.Getenv("SECRET")),
@@ -115,6 +116,18 @@ func NewRouter(
 	fa.GET("/:feedId", fac.GetArticlesByFeedID)
 	fa.GET("/:feedId/:articleId", fac.GetArticleByID)
 	fa.GET("", fac.GetAllArticles)
+
+	// レイアウト関連のルート
+	l := e.Group("/layouts")
+	l.Use(echojwt.WithConfig(echojwt.Config{
+		SigningKey:  []byte(os.Getenv("SECRET")),
+		TokenLookup: "cookie:token",
+	}))
+	l.GET("", lc.GetAllLayouts)
+	l.GET("/:layoutId", lc.GetLayoutById)
+	l.POST("", lc.CreateLayout)
+	l.PUT("/:layoutId", lc.UpdateLayout)
+	l.DELETE("/:layoutId", lc.DeleteLayout)
 
 	return e
 }

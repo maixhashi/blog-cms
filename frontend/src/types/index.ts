@@ -87,3 +87,18 @@ export type FeedArticle = {
   created_at?: string | Date
   updated_at?: string | Date
 }
+
+export type Layout = {
+  id: number
+  title: string
+  created_at: string
+  updated_at: string
+}
+
+export type LayoutComponent = {
+  id: number
+  title: string
+  layout_id: number
+  created_at: string
+  updated_at: string
+}

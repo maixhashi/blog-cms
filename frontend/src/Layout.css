@@ -1,0 +1,156 @@
+.layout-container {
+  width: 80%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.layout-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.header-icon {
+  width: 24px;
+  height: 24px;
+  color: #4f46e5;
+  margin-right: 10px;
+}
+
+.header-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #1f2937;
+}
+
+.logout-icon {
+  width: 24px;
+  height: 24px;
+  color: #ef4444;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.layout-form {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.form-input {
+  flex-grow: 1;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  margin-right: 10px;
+}
+
+.submit-button {
+  padding: 8px 16px;
+  background-color: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.submit-button:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.loading-text {
+  text-align: center;
+  color: #6b7280;
+}
+
+.layout-list {
+  list-style: none;
+  padding: 0;
+}
+
+/* 既存のCSSに追加 */
+
+.layout-actions-top {
+  margin-bottom: 20px;
+}
+
+.add-layout-button {
+  display: flex;
+  align-items: center;
+  background-color: #4a5568;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.add-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 400px;
+  height: 100vh;
+  background-color: white;
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  overflow-y: auto;
+  z-index: 10;
+}
+
+.sidebar h2 {
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+}
+
+.sidebar-actions {
+  display: flex;
+  margin-top: 20px;
+  gap: 10px;
+}
+
+.save-button {
+  background-color: #4299e1;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.save-button:disabled {
+  background-color: #cbd5e0;
+  cursor: not-allowed;
+}
+
+.close-button {
+  background-color: #e53e3e;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.edit-button {
+  background-color: #4299e1;
+  color: white;
+  padding: 4px 8px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.layout-actions {
+  display: flex;
+  gap: 8px;
+}
