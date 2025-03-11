@@ -94,3 +94,11 @@ export type Layout = {
   created_at: string
   updated_at: string
 }
+
+export type LayoutComponent = {
+  id: number
+  title: string
+  layout_id: number
+  created_at: string
+  updated_at: string
+}
