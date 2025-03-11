@@ -1,0 +1,35 @@
+.layout-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background-color: aliceblue;
+  border-radius: 4px;
+  margin-bottom: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.layout-title {
+  font-size: 16px;
+  color: #1f2937;
+}
+
+.layout-actions {
+  display: flex;
+  align-items: center;
+}
+
+.layout-icon {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.edit {
+  color: #4f46e5;
+}
+
+.delete {
+  color: #ef4444;
+}
