@@ -21,6 +21,18 @@ export type ExternalAPIState = {
   resetEditedExternalAPI: () => void
 }
 
+export type LayoutState = {
+  editedLayout: { id: number; title: string }
+  updateEditedLayout: (payload: { id: number; title: string }) => void
+  resetEditedLayout: () => void
+}
+
+export type LayoutComponentState = {
+  editedLayoutComponent: { id: number; title: string; layout_id: number }
+  updateEditedLayoutComponent: (payload: { id: number; title: string; layout_id: number }) => void
+  resetEditedLayoutComponent: () => void
+}
+
 export type FeedState = {
   editedFeed: {
     id: number
@@ -61,5 +73,5 @@ export type ArticleState = {
   resetEditedArticle: () => void
 }
 
-// 全体のアプリケーション状態の型
-export type State = TaskState & ExternalAPIState & FeedState & ArticleState
+// 全体のアプリケーション状態の型を更新
+export type State = TaskState & ExternalAPIState & FeedState & ArticleState & LayoutState & LayoutComponentState
