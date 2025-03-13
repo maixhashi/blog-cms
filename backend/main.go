@@ -50,6 +50,12 @@ func main() {
 	layoutUsecase := usecase.NewLayoutUsecase(layoutRepository, layoutValidator)
 	layoutController := controller.NewLayoutController(layoutUsecase)
 
+	// レイアウトコンポーネントのCRUD機能（追加）
+	layoutComponentValidator := validator.NewLayoutComponentValidator()
+	layoutComponentRepository := repository.NewLayoutComponentRepository(db)
+	layoutComponentUsecase := usecase.NewLayoutComponentUsecase(layoutComponentRepository, layoutComponentValidator)
+	layoutComponentController := controller.NewLayoutComponentController(layoutComponentUsecase)
+
 	qiitaRepository := repository.NewQiitaRepository()
 	qiitaUsecase := usecase.NewQiitaUsecase(qiitaRepository)
 	qiitaController := controller.NewQiitaController(qiitaUsecase)
@@ -64,6 +70,7 @@ func main() {
 	feedArticleController := controller.NewFeedArticleController(feedArticleUsecase)
 
 	e := router.NewRouter(userController, taskController, feedController, externalAPIController, 
-		qiitaController, hatenaController, articleController, feedArticleController, layoutController)
+		qiitaController, hatenaController, articleController, feedArticleController, 
+		layoutController, layoutComponentController)
 	e.Logger.Fatal(e.Start(":8080"))
 }

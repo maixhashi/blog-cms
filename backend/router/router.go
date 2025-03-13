@@ -15,7 +15,8 @@ func NewRouter(
 	hc controller.IHatenaController,
 	artc controller.IArticleController,
 	fac controller.IFeedArticleController,
-	lc controller.ILayoutController) *echo.Echo {
+	lc controller.ILayoutController,
+	lcc controller.ILayoutComponentController) *echo.Echo { // レイアウトコンポーネントコントローラーを追加
 	
 	e := echo.New()
 	
@@ -32,6 +33,7 @@ func NewRouter(
 	routes.SetupArticleRoutes(e, artc)
 	routes.SetupFeedArticleRoutes(e, fac)
 	routes.SetupLayoutRoutes(e, lc)
+	routes.SetupLayoutComponentRoutes(e, lcc) // レイアウトコンポーネントのルート設定を追加
 	
 	return e
 }

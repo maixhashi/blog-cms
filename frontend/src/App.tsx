@@ -6,6 +6,7 @@ import { Feed } from './components/Feed'
 import { ExternalAPIManager } from './components/ExternalAPIManager'
 import { ArticleManager } from './components/ArticleManager'
 import { LayoutManager } from './components/LayoutManager'
+import { LayoutComponentManager } from './components/LayoutComponentManager'
 import axios from 'axios'
 import { CsrfToken } from './types'
 import { QiitaPage } from './pages/QiitaPage'
@@ -34,6 +35,7 @@ function App() {
         <Route path="/article-manager" element={<ArticleManager />} />
         <Route path="/external-api-manager" element={<ExternalAPIManager />} />
         <Route path="/layout-manager" element={<LayoutManager />} /> 
+        <Route path="/layout-component-manager" element={<LayoutComponentManager />} />
         
         <Route path="/qiita-articles" element={<QiitaPage />} />
         <Route path="/hatena-articles" element={<HatenaPage />} />

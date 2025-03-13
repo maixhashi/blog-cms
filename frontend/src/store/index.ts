@@ -5,7 +5,7 @@ import { createAPISlice } from './slices/apiSlice'
 import { createFeedSlice } from './slices/feedSlice'
 import { createArticleSlice } from './slices/articleSlice'
 import { createLayoutSlice } from './slices/layoutSlice'
-import { createLayoutComponentSlice } from './slices/layoutSlice'
+import { createLayoutComponentSlice } from './slices/layoutComponentSlice'
 
 const useStore = create<State>((...args) => ({
   ...createTaskSlice(...args),

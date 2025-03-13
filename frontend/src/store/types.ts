@@ -28,8 +28,8 @@ export type LayoutState = {
 }
 
 export type LayoutComponentState = {
-  editedLayoutComponent: { id: number; title: string; layout_id: number }
-  updateEditedLayoutComponent: (payload: { id: number; title: string; layout_id: number }) => void
+  editedLayoutComponent: { id: number; name: string; type: string; content: string }
+  updateEditedLayoutComponent: (payload: { id: number; name: string; type: string; content: string }) => void
   resetEditedLayoutComponent: () => void
 }
 
