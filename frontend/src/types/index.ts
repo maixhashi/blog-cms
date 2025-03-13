@@ -97,8 +97,9 @@ export type Layout = {
 
 export type LayoutComponent = {
   id: number
-  title: string
-  layout_id: number
+  name: string
+  type: string
+  content: string
   created_at: string
   updated_at: string
 }
