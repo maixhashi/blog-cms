@@ -14,6 +14,9 @@ type ILayoutComponentRepository interface {
 	CreateLayoutComponent(component *model.LayoutComponent) error
 	UpdateLayoutComponent(component *model.LayoutComponent, userId uint, componentId uint) error
 	DeleteLayoutComponent(userId uint, componentId uint) error
+	AssignToLayout(componentId uint, layoutId uint, userId uint, position map[string]int) error
+	RemoveFromLayout(componentId uint, userId uint) error
+	UpdatePosition(componentId uint, userId uint, position map[string]int) error
 }
 
 type layoutComponentRepository struct {
@@ -69,4 +72,57 @@ func (lcr *layoutComponentRepository) DeleteLayoutComponent(userId uint, compone
 		return fmt.Errorf("layout component does not exist")
 	}
 	return nil
+}
+
+func (lcr *layoutComponentRepository) AssignToLayout(componentId uint, layoutId uint, userId uint, position map[string]int) error {
+    result := lcr.db.Model(&model.LayoutComponent{}).
+        Where("id = ? AND user_id = ?", componentId, userId).
+        Updates(map[string]interface{}{
+            "layout_id": layoutId,
+            "x": position["x"],
+            "y": position["y"],
+            "width": position["width"],
+            "height": position["height"],
+        })
+    
+    if result.Error != nil {
+        return result.Error
+    }
+    if result.RowsAffected < 1 {
+        return fmt.Errorf("layout component does not exist or already assigned")
+    }
+    return nil
+}
+
+func (lcr *layoutComponentRepository) RemoveFromLayout(componentId uint, userId uint) error {
+    result := lcr.db.Model(&model.LayoutComponent{}).
+        Where("id = ? AND user_id = ?", componentId, userId).
+        Update("layout_id", nil)
+    
+    if result.Error != nil {
+        return result.Error
+    }
+    if result.RowsAffected < 1 {
+        return fmt.Errorf("layout component does not exist")
+    }
+    return nil
+}
+
+func (lcr *layoutComponentRepository) UpdatePosition(componentId uint, userId uint, position map[string]int) error {
+    result := lcr.db.Model(&model.LayoutComponent{}).
+        Where("id = ? AND user_id = ?", componentId, userId).
+        Updates(map[string]interface{}{
+            "x": position["x"],
+            "y": position["y"],
+            "width": position["width"],
+            "height": position["height"],
+        })
+    
+    if result.Error != nil {
+        return result.Error
+    }
+    if result.RowsAffected < 1 {
+        return fmt.Errorf("layout component does not exist")
+    }
+    return nil
 }

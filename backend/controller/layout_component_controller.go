@@ -16,8 +16,68 @@ type ILayoutComponentController interface {
 	CreateLayoutComponent(c echo.Context) error
 	UpdateLayoutComponent(c echo.Context) error
 	DeleteLayoutComponent(c echo.Context) error
+	
+	// 新しいメソッド
+	AssignToLayout(c echo.Context) error
+	RemoveFromLayout(c echo.Context) error
+	UpdatePosition(c echo.Context) error
 }
 
+func (lcc *layoutComponentController) AssignToLayout(c echo.Context) error {
+	user := c.Get("user").(*jwt.Token)
+	claims := user.Claims.(jwt.MapClaims)
+	userId := claims["user_id"]
+	
+	componentId, _ := strconv.Atoi(c.Param("componentId"))
+	layoutId, _ := strconv.Atoi(c.Param("layoutId"))
+	
+	var position map[string]int
+	if err := c.Bind(&position); err != nil {
+		return c.JSON(http.StatusBadRequest, err.Error())
+	}
+	
+	err := lcc.lcu.AssignToLayout(uint(userId.(float64)), uint(componentId), uint(layoutId), position)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
+	
+	return c.NoContent(http.StatusOK)
+}
+
+func (lcc *layoutComponentController) RemoveFromLayout(c echo.Context) error {
+	user := c.Get("user").(*jwt.Token)
+	claims := user.Claims.(jwt.MapClaims)
+	userId := claims["user_id"]
+	
+	componentId, _ := strconv.Atoi(c.Param("componentId"))
+	
+	err := lcc.lcu.RemoveFromLayout(uint(userId.(float64)), uint(componentId))
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
+	
+	return c.NoContent(http.StatusOK)
+}
+
+func (lcc *layoutComponentController) UpdatePosition(c echo.Context) error {
+	user := c.Get("user").(*jwt.Token)
+	claims := user.Claims.(jwt.MapClaims)
+	userId := claims["user_id"]
+	
+	componentId, _ := strconv.Atoi(c.Param("componentId"))
+	
+	var position map[string]int
+	if err := c.Bind(&position); err != nil {
+		return c.JSON(http.StatusBadRequest, err.Error())
+	}
+	
+	err := lcc.lcu.UpdatePosition(uint(userId.(float64)), uint(componentId), position)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
+	
+	return c.NoContent(http.StatusOK)
+}
 type layoutComponentController struct {
 	lcu usecase.ILayoutComponentUsecase
 }

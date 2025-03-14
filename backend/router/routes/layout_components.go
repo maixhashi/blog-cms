@@ -10,10 +10,14 @@ func SetupLayoutComponentRoutes(e *echo.Echo, lcc controller.ILayoutComponentCon
 	lc := e.Group("/layout-components")
 	lc.Use(middleware.GetJWTMiddleware())
 	
-	// ルートの設定
+	// 既存のルート
 	lc.GET("", lcc.GetAllLayoutComponents)
 	lc.GET("/:componentId", lcc.GetLayoutComponentById)
 	lc.POST("", lcc.CreateLayoutComponent)
 	lc.PUT("/:componentId", lcc.UpdateLayoutComponent)
 	lc.DELETE("/:componentId", lcc.DeleteLayoutComponent)
+	
+	lc.POST("/:componentId/assign/:layoutId", lcc.AssignToLayout)
+	lc.DELETE("/:componentId/assign", lcc.RemoveFromLayout)
+	lc.PUT("/:componentId/position", lcc.UpdatePosition)
 }
