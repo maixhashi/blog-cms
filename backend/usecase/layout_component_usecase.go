@@ -12,8 +12,23 @@ type ILayoutComponentUsecase interface {
 	CreateLayoutComponent(component model.LayoutComponent) (model.LayoutComponentResponse, error)
 	UpdateLayoutComponent(component model.LayoutComponent, userId uint, componentId uint) (model.LayoutComponentResponse, error)
 	DeleteLayoutComponent(userId uint, componentId uint) error
+	
+	AssignToLayout(userId uint, componentId uint, layoutId uint, position map[string]int) error
+	RemoveFromLayout(userId uint, componentId uint) error
+	UpdatePosition(userId uint, componentId uint, position map[string]int) error
 }
 
+func (lcu *layoutComponentUsecase) AssignToLayout(userId uint, componentId uint, layoutId uint, position map[string]int) error {
+	return lcu.lcr.AssignToLayout(componentId, layoutId, userId, position)
+}
+
+func (lcu *layoutComponentUsecase) RemoveFromLayout(userId uint, componentId uint) error {
+	return lcu.lcr.RemoveFromLayout(componentId, userId)
+}
+
+func (lcu *layoutComponentUsecase) UpdatePosition(userId uint, componentId uint, position map[string]int) error {
+	return lcu.lcr.UpdatePosition(componentId, userId, position)
+}
 type layoutComponentUsecase struct {
 	lcr repository.ILayoutComponentRepository
 	lcv validator.ILayoutComponentValidator

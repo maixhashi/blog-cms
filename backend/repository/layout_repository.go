@@ -32,7 +32,7 @@ func (lr *layoutRepository) GetAllLayouts(layouts *[]model.Layout, userId uint) 
 }
 
 func (lr *layoutRepository) GetLayoutById(layout *model.Layout, userId uint, layoutId uint) error {
-	if err := lr.db.Joins("User").Where("user_id=?", userId).First(layout, layoutId).Error; err != nil {
+	if err := lr.db.Preload("Components").Joins("User").Where("user_id=?", userId).First(layout, layoutId).Error; err != nil {
 		return err
 	}
 	return nil
