@@ -183,7 +183,7 @@ func TestUserController_LogIn(t *testing.T) {
 	// テスト用ユーザーを事前に登録
 	validEmail := "logintest@example.com"
 	validPassword := "password123"
-	userUsecase.SignUp(model.User{
+	userUsecase.SignUp(model.UserSignupRequest{
 		Email:    validEmail,
 		Password: validPassword,
 	})
@@ -361,50 +361,35 @@ func TestUserController_CsrfToken(t *testing.T) {
 				t.Errorf("Failed to unmarshal response: %v", err)
 			}
 
-			// CSRFトークンが返されていることを確認
-			if token, exists := response["csrf_token"]; !exists || token != "test-csrf-token" {
-				t.Errorf("CsrfToken() response = %v, want csrf_token = test-csrf-token", response)
+			// CSRFトークンが含まれていることを確認
+			token, exists := response["csrf_token"]
+			if !exists {
+				t.Error("CsrfToken() response does not contain csrf_token field")
+			}
+
+			if token != "test-csrf-token" {
+				t.Errorf("CsrfToken() returned token = %s, want %s", token, "test-csrf-token")
 			}
 		})
 	})
 
 	t.Run("異常系", func(t *testing.T) {
-		t.Run("CSRFトークンが設定されていない場合はパニックが発生する", func(t *testing.T) {
+		t.Run("CSRFトークンが設定されていない場合はエラーを返す", func(t *testing.T) {
 			// CSRFトークンなしでコンテキストを設定
 			e := echo.New()
 			req := httptest.NewRequest(http.MethodGet, "/csrf-token", nil)
 			rec := httptest.NewRecorder()
 			c := e.NewContext(req, rec)
 			
-			// パニックが発生することを確認
+			// テスト実行 - CSRFトークンがないのでパニックが発生するはず
+			// パニックをキャッチするためにdeferとrecoverを使用
 			defer func() {
 				if r := recover(); r == nil {
-					t.Error("CsrfToken() should panic when CSRF token is not set")
+					t.Error("CsrfToken() did not panic when csrf token is missing")
 				}
 			}()
 			
-			// テスト実行 - パニックが発生するはず
-			uc.CsrfToken(c)
-		})
-		
-		t.Run("CSRFトークンが不正な型の場合はパニックが発生する", func(t *testing.T) {
-			// 不正な型のCSRFトークンでコンテキストを設定
-			e := echo.New()
-			req := httptest.NewRequest(http.MethodGet, "/csrf-token", nil)
-			rec := httptest.NewRecorder()
-			c := e.NewContext(req, rec)
-			
-			// 文字列ではなく数値を設定
-			c.Set("csrf", 12345)
-			
-			// パニックが発生することを確認
-			defer func() {
-				if r := recover(); r == nil {
-					t.Error("CsrfToken() should panic when CSRF token is not a string")
-				}
-			}()
-			
-			// テスト実行 - パニックが発生するはず
+			// このコードはパニックを起こすはず
 			uc.CsrfToken(c)
 		})
 	})

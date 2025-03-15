@@ -26,26 +26,30 @@ func NewUserController(uu usecase.IUserUsecase) IUserController {
 }
 
 func (uc *userController) SignUp(c echo.Context) error {
-	user := model.User{}
-	if err := c.Bind(&user); err != nil {
-		return c.JSON(http.StatusBadRequest, err.Error())
+	req := model.UserSignupRequest{}
+	if err := c.Bind(&req); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
 	}
-	userRes, err := uc.uu.SignUp(user)
+	
+	userRes, err := uc.uu.SignUp(req)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err.Error())
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
+	
 	return c.JSON(http.StatusCreated, userRes)
 }
 
 func (uc *userController) LogIn(c echo.Context) error {
-	user := model.User{}
-	if err := c.Bind(&user); err != nil {
-		return c.JSON(http.StatusBadRequest, err.Error())
+	req := model.UserLoginRequest{}
+	if err := c.Bind(&req); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
 	}
-	tokenString, err := uc.uu.Login(user)
+	
+	tokenString, err := uc.uu.Login(req)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err.Error())
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
+	
 	cookie := new(http.Cookie)
 	cookie.Name = "token"
 	cookie.Value = tokenString
@@ -56,6 +60,7 @@ func (uc *userController) LogIn(c echo.Context) error {
 	cookie.HttpOnly = true
 	cookie.SameSite = http.SameSiteNoneMode
 	c.SetCookie(cookie)
+	
 	return c.NoContent(http.StatusOK)
 }
 
@@ -70,12 +75,13 @@ func (uc *userController) LogOut(c echo.Context) error {
 	cookie.HttpOnly = true
 	cookie.SameSite = http.SameSiteNoneMode
 	c.SetCookie(cookie)
+	
 	return c.NoContent(http.StatusOK)
 }
 
 func (uc *userController) CsrfToken(c echo.Context) error {
 	token := c.Get("csrf").(string)
-	return c.JSON(http.StatusOK, echo.Map{
+	return c.JSON(http.StatusOK, map[string]string{
 		"csrf_token": token,
 	})
 }

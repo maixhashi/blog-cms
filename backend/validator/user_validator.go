@@ -22,18 +22,18 @@ func (uv *userValidator) UserValidate(user model.User) error {
 	return validation.ValidateStruct(&user,
 		validation.Field(
 			&user.Email,
-			validation.Required.Error("email is required"),
-			validation.RuneLength(model.UserEmailMinLength, model.UserEmailMaxLength).Error("limited min "+
-				 fmt.Sprintf("%d", model.UserEmailMinLength) + 
-				 " max " + fmt.Sprintf("%d", model.UserEmailMaxLength) + " char"),
-			is.Email.Error("is not valid email format"),
+			validation.Required.Error("メールアドレスは必須です"),
+			validation.RuneLength(model.UserEmailMinLength, model.UserEmailMaxLength).Error(
+				fmt.Sprintf("メールアドレスは%d文字から%d文字の間である必要があります", 
+				model.UserEmailMinLength, model.UserEmailMaxLength)),
+			is.Email.Error("有効なメールアドレス形式ではありません"),
 		),
 		validation.Field(
 			&user.Password,
-			validation.Required.Error("password is required"),
-			validation.RuneLength(model.UserPasswordMinLength, model.UserPasswordMaxLength).Error("limited min " + 
-				fmt.Sprintf("%d", model.UserPasswordMinLength) + 
-				" max " + fmt.Sprintf("%d", model.UserPasswordMaxLength) + " char"),
+			validation.Required.Error("パスワードは必須です"),
+			validation.RuneLength(model.UserPasswordMinLength, model.UserPasswordMaxLength).Error(
+				fmt.Sprintf("パスワードは%d文字から%d文字の間である必要があります", 
+				model.UserPasswordMinLength, model.UserPasswordMaxLength)),
 		),
 	)
 }
