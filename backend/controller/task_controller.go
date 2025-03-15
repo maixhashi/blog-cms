@@ -27,75 +27,88 @@ func NewTaskController(tu usecase.ITaskUsecase) ITaskController {
 }
 
 func (tc *taskController) GetAllTasks(c echo.Context) error {
-	user := c.Get("user").(*jwt.Token)
-	claims := user.Claims.(jwt.MapClaims)
-	userId := claims["user_id"]
-
-	tasksRes, err := tc.tu.GetAllTasks(uint(userId.(float64)))
+	userId := getUserIdFromToken(c)
+	
+	tasksRes, err := tc.tu.GetAllTasks(userId)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err.Error())
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 	return c.JSON(http.StatusOK, tasksRes)
 }
 
 func (tc *taskController) GetTaskById(c echo.Context) error {
-	user := c.Get("user").(*jwt.Token)
-	claims := user.Claims.(jwt.MapClaims)
-	userId := claims["user_id"]
+	userId := getUserIdFromToken(c)
+	
 	id := c.Param("taskId")
-	taskId, _ := strconv.Atoi(id)
-	taskRes, err := tc.tu.GetTaskById(uint(userId.(float64)), uint(taskId))
+	taskId, err := strconv.ParseUint(id, 10, 32)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err.Error())
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "invalid task ID"})
+	}
+	
+	taskRes, err := tc.tu.GetTaskById(userId, uint(taskId))
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 	return c.JSON(http.StatusOK, taskRes)
 }
 
 func (tc *taskController) CreateTask(c echo.Context) error {
-	user := c.Get("user").(*jwt.Token)
-	claims := user.Claims.(jwt.MapClaims)
-	userId := claims["user_id"]
-
-	task := model.Task{}
-	if err := c.Bind(&task); err != nil {
-		return c.JSON(http.StatusBadRequest, err.Error())
+	userId := getUserIdFromToken(c)
+	
+	var request model.TaskRequest
+	if err := c.Bind(&request); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
 	}
-	task.UserId = uint(userId.(float64))
-	taskRes, err := tc.tu.CreateTask(task)
+	
+	request.UserId = userId
+	taskRes, err := tc.tu.CreateTask(request)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err.Error())
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 	return c.JSON(http.StatusCreated, taskRes)
 }
 
 func (tc *taskController) UpdateTask(c echo.Context) error {
-	user := c.Get("user").(*jwt.Token)
-	claims := user.Claims.(jwt.MapClaims)
-	userId := claims["user_id"]
+	userId := getUserIdFromToken(c)
+	
 	id := c.Param("taskId")
-	taskId, _ := strconv.Atoi(id)
-
-	task := model.Task{}
-	if err := c.Bind(&task); err != nil {
-		return c.JSON(http.StatusBadRequest, err.Error())
-	}
-	taskRes, err := tc.tu.UpdateTask(task, uint(userId.(float64)), uint(taskId))
+	taskId, err := strconv.ParseUint(id, 10, 32)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err.Error())
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "invalid task ID"})
+	}
+	
+	var request model.TaskRequest
+	if err := c.Bind(&request); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+	}
+	
+	request.UserId = userId
+	taskRes, err := tc.tu.UpdateTask(request, userId, uint(taskId))
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 	return c.JSON(http.StatusOK, taskRes)
 }
 
 func (tc *taskController) DeleteTask(c echo.Context) error {
-	user := c.Get("user").(*jwt.Token)
-	claims := user.Claims.(jwt.MapClaims)
-	userId := claims["user_id"]
+	userId := getUserIdFromToken(c)
+	
 	id := c.Param("taskId")
-	taskId, _ := strconv.Atoi(id)
-
-	err := tc.tu.DeleteTask(uint(userId.(float64)), uint(taskId))
+	taskId, err := strconv.ParseUint(id, 10, 32)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err.Error())
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "invalid task ID"})
+	}
+	
+	err = tc.tu.DeleteTask(userId, uint(taskId))
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 	return c.NoContent(http.StatusNoContent)
+}
+
+// ヘルパー関数
+func getUserIdFromToken(c echo.Context) uint {
+	user := c.Get("user").(*jwt.Token)
+	claims := user.Claims.(jwt.MapClaims)
+	return uint(claims["user_id"].(float64))
 }

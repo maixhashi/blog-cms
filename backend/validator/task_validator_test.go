@@ -18,12 +18,12 @@ func TestTaskValidate(t *testing.T) {
 
 	testCases := []struct {
 		name     string
-		task     model.Task
+		request  model.TaskRequest
 		hasError bool
 	}{
 		{
 			name: "Valid task with valid title",
-			task: model.Task{
+			request: model.TaskRequest{
 				Title:  testutils.GenerateValidTitle(),
 				UserId: user.ID,
 			},
@@ -31,7 +31,7 @@ func TestTaskValidate(t *testing.T) {
 		},
 		{
 			name: "Empty title",
-			task: model.Task{
+			request: model.TaskRequest{
 				Title:  "",
 				UserId: user.ID,
 			},
@@ -39,7 +39,7 @@ func TestTaskValidate(t *testing.T) {
 		},
 		{
 			name: "Title too long",
-			task: model.Task{
+			request: model.TaskRequest{
 				Title:  testutils.GenerateInvalidTitle(),
 				UserId: user.ID,
 			},
@@ -47,7 +47,7 @@ func TestTaskValidate(t *testing.T) {
 		},
 		{
 			name: "Valid title with exact max length",
-			task: model.Task{
+			request: model.TaskRequest{
 				Title:  generateExactMaxLengthTitle(),
 				UserId: user.ID,
 			},
@@ -55,7 +55,7 @@ func TestTaskValidate(t *testing.T) {
 		},
 		{
 			name: "Zero user ID",
-			task: model.Task{
+			request: model.TaskRequest{
 				Title:  "Valid Title",
 				UserId: 0,
 			},
@@ -65,9 +65,9 @@ func TestTaskValidate(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			err := validator.TaskValidate(tc.task)
+			err := validator.ValidateTaskRequest(tc.request)
 			if (err != nil) != tc.hasError {
-				t.Errorf("TaskValidate() error = %v, want error: %v", err, tc.hasError)
+				t.Errorf("ValidateTaskRequest() error = %v, want error: %v", err, tc.hasError)
 			}
 		})
 	}
@@ -86,26 +86,26 @@ func TestTaskValidateWithDB(t *testing.T) {
 	validator := NewTaskValidator()
 
 	// ユーザー1のタスクを作成
-	task1 := model.Task{
+	request1 := model.TaskRequest{
 		Title:  "User 1 Task",
 		UserId: user1.ID,
 	}
 	
 	// ユーザー2のタスクを作成
-	task2 := model.Task{
+	request2 := model.TaskRequest{
 		Title:  "User 2 Task",
 		UserId: user2.ID,
 	}
 	
 	// バリデーションのテスト
-	err1 := validator.TaskValidate(task1)
+	err1 := validator.ValidateTaskRequest(request1)
 	if err1 != nil {
-		t.Errorf("TaskValidate() for user1 should not return error, got: %v", err1)
+		t.Errorf("ValidateTaskRequest() for user1 should not return error, got: %v", err1)
 	}
 	
-	err2 := validator.TaskValidate(task2)
+	err2 := validator.ValidateTaskRequest(request2)
 	if err2 != nil {
-		t.Errorf("TaskValidate() for user2 should not return error, got: %v", err2)
+		t.Errorf("ValidateTaskRequest() for user2 should not return error, got: %v", err2)
 	}
 }
 

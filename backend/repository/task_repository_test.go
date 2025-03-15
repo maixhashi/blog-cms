@@ -43,10 +43,10 @@ func TestTaskRepository_GetAllTasks(t *testing.T) {
 	
 	t.Run("正常系", func(t *testing.T) {
 		t.Run("正しいユーザーIDのタスクのみを取得する", func(t *testing.T) {
-			var result []model.Task
-			err := taskRepo.GetAllTasks(&result, taskTestUser.ID)
-			
 			t.Logf("ユーザーID %d のタスクを取得します", taskTestUser.ID)
+			
+			// 修正: 戻り値を受け取る変数を追加
+			result, err := taskRepo.GetAllTasks(taskTestUser.ID)
 			
 			if err != nil {
 				t.Errorf("GetAllTasks() error = %v", err)
@@ -71,6 +71,7 @@ func TestTaskRepository_GetAllTasks(t *testing.T) {
 	
 	// 異常系のテストケースを追加する場合はここに
 }
+
 func TestTaskRepository_GetTaskById(t *testing.T) {
 	setupTaskTest()
 	
@@ -85,8 +86,8 @@ func TestTaskRepository_GetTaskById(t *testing.T) {
 		t.Run("存在するタスクを正しく取得する", func(t *testing.T) {
 			t.Logf("タスクID %d を取得します", task.ID)
 	
-			var result model.Task
-			err := taskRepo.GetTaskById(&result, taskTestUser.ID, task.ID)
+			// 修正: 戻り値を受け取る変数を追加
+			result, err := taskRepo.GetTaskById(taskTestUser.ID, task.ID)
 	
 			if err != nil {
 				t.Errorf("GetTaskById() error = %v", err)
@@ -104,8 +105,8 @@ func TestTaskRepository_GetTaskById(t *testing.T) {
 		t.Run("存在しないIDを指定した場合はエラーを返す", func(t *testing.T) {
 			t.Logf("存在しないID %d を指定してタスクを取得しようとします", nonExistentTaskID)
 	
-			var notFound model.Task
-			err := taskRepo.GetTaskById(&notFound, taskTestUser.ID, nonExistentTaskID)
+			// 修正: 戻り値を受け取る変数を追加
+			_, err := taskRepo.GetTaskById(taskTestUser.ID, nonExistentTaskID)
 	
 			if err == nil {
 				t.Error("存在しないIDを指定したときにエラーが返されませんでした")
@@ -123,8 +124,8 @@ func TestTaskRepository_GetTaskById(t *testing.T) {
 			taskDB.Create(&otherUserTask)
 			t.Logf("他ユーザーのタスク(ID=%d)を別ユーザー(ID=%d)として取得しようとします", otherUserTask.ID, taskTestUser.ID)
 			
-			var result model.Task
-			err := taskRepo.GetTaskById(&result, taskTestUser.ID, otherUserTask.ID)
+			// 修正: 戻り値を受け取る変数を追加
+			_, err := taskRepo.GetTaskById(taskTestUser.ID, otherUserTask.ID)
 			
 			if err == nil {
 				t.Error("他のユーザーのタスクを取得できてしまいました")
@@ -325,7 +326,7 @@ func TestTaskRepository_DeleteTask(t *testing.T) {
 			}
 		})
 		
-		t.Run("他のユーザーのタスクを削除しようとするとエラー", func(t *testing.T) {
+		t.Run("他のユーザーのタスクは削除できない", func(t *testing.T) {
 			// 他のユーザーのタスクを作成
 			otherUserTask := model.Task{
 				Title:  "Other User's Task",
@@ -340,6 +341,15 @@ func TestTaskRepository_DeleteTask(t *testing.T) {
 				t.Error("DeleteTask() should not allow deleting other user's task")
 			} else {
 				t.Logf("期待通りエラーが返された: %v", err)
+			}
+			
+			// データベースに残っていることを確認
+			var count int64
+			taskDB.Model(&model.Task{}).Where("id = ?", otherUserTask.ID).Count(&count)
+			if count == 0 {
+				t.Error("他ユーザーのタスクが削除されています")
+			} else {
+				t.Log("他ユーザーのタスクは削除されていないことを確認")
 			}
 		})
 	})

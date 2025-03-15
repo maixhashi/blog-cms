@@ -9,8 +9,8 @@ import (
 )
 
 type ITaskRepository interface {
-	GetAllTasks(tasks *[]model.Task, userId uint) error
-	GetTaskById(task *model.Task, userId uint, taskId uint) error
+	GetAllTasks(userId uint) ([]model.Task, error)
+	GetTaskById(userId uint, taskId uint) (model.Task, error)
 	CreateTask(task *model.Task) error
 	UpdateTask(task *model.Task, userId uint, taskId uint) error
 	DeleteTask(userId uint, taskId uint) error
@@ -24,33 +24,37 @@ func NewTaskRepository(db *gorm.DB) ITaskRepository {
 	return &taskRepository{db}
 }
 
-func (tr *taskRepository) GetAllTasks(tasks *[]model.Task, userId uint) error {
-	if err := tr.db.Joins("User").Where("user_id=?", userId).Order("tasks.created_at").Find(tasks).Error; err != nil {
-		return err
+func (tr *taskRepository) GetAllTasks(userId uint) ([]model.Task, error) {
+	var tasks []model.Task
+	if err := tr.db.Where("user_id=?", userId).Order("created_at").Find(&tasks).Error; err != nil {
+		return nil, err
 	}
-	return nil
+	return tasks, nil
 }
 
-func (tr *taskRepository) GetTaskById(task *model.Task, userId uint, taskId uint) error {
-	result := tr.db.Joins("User").Where("user_id=?", userId).First(task, taskId)
+func (tr *taskRepository) GetTaskById(userId uint, taskId uint) (model.Task, error) {
+	var task model.Task
+	result := tr.db.Where("user_id=?", userId).First(&task, taskId)
 	if result.Error != nil {
-		return result.Error
+		return model.Task{}, result.Error
 	}
 	if result.RowsAffected == 0 {
-		return fmt.Errorf("task not found")
+		return model.Task{}, fmt.Errorf("task not found")
 	}
-	return nil
+	return task, nil
 }
 
 func (tr *taskRepository) CreateTask(task *model.Task) error {
-	if err := tr.db.Create(task).Error; err != nil {
-		return err
-	}
-	return nil
+	return tr.db.Create(task).Error
 }
 
 func (tr *taskRepository) UpdateTask(task *model.Task, userId uint, taskId uint) error {
-	result := tr.db.Model(task).Clauses(clause.Returning{}).Where("id=? AND user_id=?", taskId, userId).Update("title", task.Title)
+	result := tr.db.Model(&model.Task{}).Clauses(clause.Returning{}).
+		Where("id=? AND user_id=?", taskId, userId).
+		Updates(map[string]interface{}{
+			"title": task.Title,
+		}).First(task)
+	
 	if result.Error != nil {
 		return result.Error
 	}
