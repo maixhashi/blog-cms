@@ -19,12 +19,12 @@ func TestArticleValidate(t *testing.T) {
 
 	testCases := []struct {
 		name     string
-		article  model.Article
+		request  model.ArticleRequest
 		hasError bool
 	}{
 		{
 			name: "Valid article with valid title",
-			article: model.Article{
+			request: model.ArticleRequest{
 				Title:   "Valid Title",
 				Content: "Some content",
 				UserId:  user.ID,
@@ -33,7 +33,7 @@ func TestArticleValidate(t *testing.T) {
 		},
 		{
 			name: "Empty title",
-			article: model.Article{
+			request: model.ArticleRequest{
 				Title:   "",
 				Content: "Some content",
 				UserId:  user.ID,
@@ -42,7 +42,7 @@ func TestArticleValidate(t *testing.T) {
 		},
 		{
 			name: "Valid article with content",
-			article: model.Article{
+			request: model.ArticleRequest{
 				Title:   "Valid Title",
 				Content: "This is a valid content",
 				UserId:  user.ID,
@@ -51,7 +51,7 @@ func TestArticleValidate(t *testing.T) {
 		},
 		{
 			name: "Valid article with no content",
-			article: model.Article{
+			request: model.ArticleRequest{
 				Title:   "Valid Title",
 				Content: "",
 				UserId:  user.ID,
@@ -62,9 +62,9 @@ func TestArticleValidate(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			err := validator.ArticleValidate(tc.article)
+			err := validator.ValidateArticleRequest(tc.request)
 			if (err != nil) != tc.hasError {
-				t.Errorf("ArticleValidate() error = %v, want error: %v", err, tc.hasError)
+				t.Errorf("ValidateArticleRequest() error = %v, want error: %v", err, tc.hasError)
 			}
 		})
 	}

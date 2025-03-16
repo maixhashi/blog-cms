@@ -9,8 +9,8 @@ import (
 type IArticleUsecase interface {
 	GetAllArticles(userId uint) ([]model.ArticleResponse, error)
 	GetArticleById(userId uint, articleId uint) (model.ArticleResponse, error)
-	CreateArticle(article model.Article) (model.ArticleResponse, error)
-	UpdateArticle(article model.Article, userId uint, articleId uint) (model.ArticleResponse, error)
+	CreateArticle(request model.ArticleRequest) (model.ArticleResponse, error)
+	UpdateArticle(request model.ArticleRequest, userId uint, articleId uint) (model.ArticleResponse, error)
 	DeleteArticle(userId uint, articleId uint) error
 }
 
@@ -28,18 +28,10 @@ func (au *articleUsecase) GetAllArticles(userId uint) ([]model.ArticleResponse, 
 	if err := au.ar.GetAllArticles(&articles, userId); err != nil {
 		return nil, err
 	}
-	resArticles := []model.ArticleResponse{}
-	for _, v := range articles {
-		a := model.ArticleResponse{
-			ID:        v.ID,
-			Title:     v.Title,
-			Content:   v.Content,
-			Published: v.Published,
-			Tags:      v.Tags,
-			CreatedAt: v.CreatedAt,
-			UpdatedAt: v.UpdatedAt,
-		}
-		resArticles = append(resArticles, a)
+	
+	resArticles := make([]model.ArticleResponse, len(articles))
+	for i, article := range articles {
+		resArticles[i] = article.ToResponse()
 	}
 	return resArticles, nil
 }
@@ -49,59 +41,35 @@ func (au *articleUsecase) GetArticleById(userId uint, articleId uint) (model.Art
 	if err := au.ar.GetArticleById(&article, userId, articleId); err != nil {
 		return model.ArticleResponse{}, err
 	}
-	resArticle := model.ArticleResponse{
-		ID:        article.ID,
-		Title:     article.Title,
-		Content:   article.Content,
-		Published: article.Published,
-		Tags:      article.Tags,
-		CreatedAt: article.CreatedAt,
-		UpdatedAt: article.UpdatedAt,
-	}
-	return resArticle, nil
+	return article.ToResponse(), nil
 }
 
-func (au *articleUsecase) CreateArticle(article model.Article) (model.ArticleResponse, error) {
-	if err := au.av.ArticleValidate(article); err != nil {
+func (au *articleUsecase) CreateArticle(request model.ArticleRequest) (model.ArticleResponse, error) {
+	if err := au.av.ValidateArticleRequest(request); err != nil {
 		return model.ArticleResponse{}, err
 	}
+	
+	article := request.ToModel()
 	if err := au.ar.CreateArticle(&article); err != nil {
 		return model.ArticleResponse{}, err
 	}
-	resArticle := model.ArticleResponse{
-		ID:        article.ID,
-		Title:     article.Title,
-		Content:   article.Content,
-		Published: article.Published,
-		Tags:      article.Tags,
-		CreatedAt: article.CreatedAt,
-		UpdatedAt: article.UpdatedAt,
-	}
-	return resArticle, nil
+	
+	return article.ToResponse(), nil
 }
 
-func (au *articleUsecase) UpdateArticle(article model.Article, userId uint, articleId uint) (model.ArticleResponse, error) {
-	if err := au.av.ArticleValidate(article); err != nil {
+func (au *articleUsecase) UpdateArticle(request model.ArticleRequest, userId uint, articleId uint) (model.ArticleResponse, error) {
+	if err := au.av.ValidateArticleRequest(request); err != nil {
 		return model.ArticleResponse{}, err
 	}
+	
+	article := request.ToModel()
 	if err := au.ar.UpdateArticle(&article, userId, articleId); err != nil {
 		return model.ArticleResponse{}, err
 	}
-	resArticle := model.ArticleResponse{
-		ID:        article.ID,
-		Title:     article.Title,
-		Content:   article.Content,
-		Published: article.Published,
-		Tags:      article.Tags,
-		CreatedAt: article.CreatedAt,
-		UpdatedAt: article.UpdatedAt,
-	}
-	return resArticle, nil
+	
+	return article.ToResponse(), nil
 }
 
 func (au *articleUsecase) DeleteArticle(userId uint, articleId uint) error {
-	if err := au.ar.DeleteArticle(userId, articleId); err != nil {
-		return err
-	}
-	return nil
+	return au.ar.DeleteArticle(userId, articleId)
 }

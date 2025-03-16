@@ -9,13 +9,14 @@ func TestArticleUsecase_GetAllArticles(t *testing.T) {
 	setupArticleUsecaseTest()
 	
 	// テストデータの作成
-	articles := []model.Article{
+	articlesReq := []model.ArticleRequest{
 		{Title: "Article 1", Content: "Content 1", UserId: articleTestUser.ID},
 		{Title: "Article 2", Content: "Content 2", UserId: articleTestUser.ID},
 		{Title: "Article 3", Content: "Content 3", UserId: articleOtherUser.ID}, // 別ユーザーの記事
 	}
 	
-	for _, article := range articles {
+	for _, req := range articlesReq {
+		article := req.ToModel()
 		articleDb.Create(&article)
 	}
 	

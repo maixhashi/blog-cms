@@ -45,12 +45,14 @@ func setupArticleUsecaseTest() {
 
 // テスト用の記事を作成するヘルパー関数
 func createTestArticle(t *testing.T, title string, content string, userId uint) model.Article {
-	article := model.Article{
+	// ArticleRequestを使用
+	request := model.ArticleRequest{
 		Title:   title,
 		Content: content,
 		UserId:  userId,
 	}
 	
+	article := request.ToModel()
 	result := articleDb.Create(&article)
 	if result.Error != nil {
 		t.Fatalf("テスト記事の作成に失敗しました: %v", result.Error)

@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/golang-jwt/jwt/v4"
 	"github.com/labstack/echo/v4"
 )
 
@@ -106,9 +105,3 @@ func (tc *taskController) DeleteTask(c echo.Context) error {
 	return c.NoContent(http.StatusNoContent)
 }
 
-// ヘルパー関数
-func getUserIdFromToken(c echo.Context) uint {
-	user := c.Get("user").(*jwt.Token)
-	claims := user.Claims.(jwt.MapClaims)
-	return uint(claims["user_id"].(float64))
-}

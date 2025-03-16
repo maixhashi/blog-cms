@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/golang-jwt/jwt/v4"
 	"github.com/labstack/echo/v4"
 )
 
@@ -27,77 +26,81 @@ func NewArticleController(au usecase.IArticleUsecase) IArticleController {
 }
 
 func (ac *articleController) GetAllArticles(c echo.Context) error {
-	user := c.Get("user").(*jwt.Token)
-	claims := user.Claims.(jwt.MapClaims)
-	userId := claims["user_id"]
-
-	articlesRes, err := ac.au.GetAllArticles(uint(userId.(float64)))
+	userId := getUserIdFromToken(c)
+	
+	articlesRes, err := ac.au.GetAllArticles(userId)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err.Error())
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 	return c.JSON(http.StatusOK, articlesRes)
 }
 
 func (ac *articleController) GetArticleById(c echo.Context) error {
-	user := c.Get("user").(*jwt.Token)
-	claims := user.Claims.(jwt.MapClaims)
-	userId := claims["user_id"]
+	userId := getUserIdFromToken(c)
+	
 	id := c.Param("articleId")
-	articleId, _ := strconv.Atoi(id)
-
-	articleRes, err := ac.au.GetArticleById(uint(userId.(float64)), uint(articleId))
+	articleId, err := strconv.ParseUint(id, 10, 32)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err.Error())
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "無効な記事IDです"})
+	}
+	
+	articleRes, err := ac.au.GetArticleById(userId, uint(articleId))
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 	return c.JSON(http.StatusOK, articleRes)
 }
 
 func (ac *articleController) CreateArticle(c echo.Context) error {
-	user := c.Get("user").(*jwt.Token)
-	claims := user.Claims.(jwt.MapClaims)
-	userId := claims["user_id"]
-
-	article := model.Article{}
-	if err := c.Bind(&article); err != nil {
-		return c.JSON(http.StatusBadRequest, err.Error())
+	userId := getUserIdFromToken(c)
+	
+	var request model.ArticleRequest
+	if err := c.Bind(&request); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
 	}
-	article.UserId = uint(userId.(float64))
-
-	articleRes, err := ac.au.CreateArticle(article)
+	
+	request.UserId = userId
+	articleRes, err := ac.au.CreateArticle(request)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err.Error())
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 	return c.JSON(http.StatusCreated, articleRes)
 }
 
 func (ac *articleController) UpdateArticle(c echo.Context) error {
-	user := c.Get("user").(*jwt.Token)
-	claims := user.Claims.(jwt.MapClaims)
-	userId := claims["user_id"]
+	userId := getUserIdFromToken(c)
+	
 	id := c.Param("articleId")
-	articleId, _ := strconv.Atoi(id)
-
-	article := model.Article{}
-	if err := c.Bind(&article); err != nil {
-		return c.JSON(http.StatusBadRequest, err.Error())
-	}
-	articleRes, err := ac.au.UpdateArticle(article, uint(userId.(float64)), uint(articleId))
+	articleId, err := strconv.ParseUint(id, 10, 32)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err.Error())
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "無効な記事IDです"})
+	}
+	
+	var request model.ArticleRequest
+	if err := c.Bind(&request); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+	}
+	
+	request.UserId = userId
+	articleRes, err := ac.au.UpdateArticle(request, userId, uint(articleId))
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 	return c.JSON(http.StatusOK, articleRes)
 }
 
 func (ac *articleController) DeleteArticle(c echo.Context) error {
-	user := c.Get("user").(*jwt.Token)
-	claims := user.Claims.(jwt.MapClaims)
-	userId := claims["user_id"]
+	userId := getUserIdFromToken(c)
+	
 	id := c.Param("articleId")
-	articleId, _ := strconv.Atoi(id)
-
-	err := ac.au.DeleteArticle(uint(userId.(float64)), uint(articleId))
+	articleId, err := strconv.ParseUint(id, 10, 32)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err.Error())
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "無効な記事IDです"})
+	}
+	
+	err = ac.au.DeleteArticle(userId, uint(articleId))
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 	return c.NoContent(http.StatusNoContent)
 }
