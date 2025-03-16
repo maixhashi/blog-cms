@@ -18,16 +18,17 @@ func TestArticleUsecase_UpdateArticle(t *testing.T) {
 	
 	t.Run("正常系", func(t *testing.T) {
 		t.Run("記事のタイトルと内容を更新できる", func(t *testing.T) {
-			// 更新する記事
-			updatedArticle := model.Article{
+			// 更新する記事リクエスト
+			updatedRequest := model.ArticleRequest{
 				Title:   "Updated Article Title",
 				Content: "Updated Article Content",
+				UserId:  articleTestUser.ID,
 			}
 			
-			t.Logf("記事更新リクエスト: ID=%d, 新Title=%s", article.ID, updatedArticle.Title)
+			t.Logf("記事更新リクエスト: ID=%d, 新Title=%s", article.ID, updatedRequest.Title)
 			
 			// テスト実行
-			response, err := articleUsecase.UpdateArticle(updatedArticle, articleTestUser.ID, article.ID)
+			response, err := articleUsecase.UpdateArticle(updatedRequest, articleTestUser.ID, article.ID)
 			
 			// 検証
 			if err != nil {
@@ -37,29 +38,30 @@ func TestArticleUsecase_UpdateArticle(t *testing.T) {
 			}
 			
 			// 返り値の記事が更新されていることを確認
-			if response.ID != article.ID || response.Title != updatedArticle.Title || response.Content != updatedArticle.Content {
-				t.Errorf("UpdateArticle() = %+v, want id=%d, title=%s, content=%s", response, article.ID, updatedArticle.Title, updatedArticle.Content)
+			if response.ID != article.ID || response.Title != updatedRequest.Title || response.Content != updatedRequest.Content {
+				t.Errorf("UpdateArticle() = %+v, want id=%d, title=%s, content=%s", response, article.ID, updatedRequest.Title, updatedRequest.Content)
 			} else {
 				t.Logf("返り値確認: ID=%d, Title=%s, Content=%s", response.ID, response.Title, response.Content)
 			}
 			
 			// データベースから直接確認
-			verifyDatabaseArticle(t, article.ID, updatedArticle.Title, updatedArticle.Content, articleTestUser.ID)
-			t.Logf("データベース更新確認: Title=%s, Content=%s", updatedArticle.Title, updatedArticle.Content)
+			verifyDatabaseArticle(t, article.ID, updatedRequest.Title, updatedRequest.Content, articleTestUser.ID)
+			t.Logf("データベース更新確認: Title=%s, Content=%s", updatedRequest.Title, updatedRequest.Content)
 		})
 	})
 	
 	t.Run("異常系", func(t *testing.T) {
 		t.Run("バリデーションエラーが発生する記事は更新できない", func(t *testing.T) {
 			// 無効な更新（空のタイトル）
-			invalidUpdate := model.Article{
+			invalidRequest := model.ArticleRequest{
 				Title:   "", // 空のタイトル
 				Content: "Valid Content",
+				UserId:  articleTestUser.ID,
 			}
 			
 			t.Logf("無効なタイトルでの更新を試行: タイトルが空")
 			
-			_, err := articleUsecase.UpdateArticle(invalidUpdate, articleTestUser.ID, article.ID)
+			_, err := articleUsecase.UpdateArticle(invalidRequest, articleTestUser.ID, article.ID)
 			
 			// バリデーションエラーが発生するはず
 			if err == nil {
@@ -71,7 +73,7 @@ func TestArticleUsecase_UpdateArticle(t *testing.T) {
 			// データベースに反映されていないことを確認
 			var dbArticle model.Article
 			articleDb.First(&dbArticle, article.ID)
-			if dbArticle.Title == invalidUpdate.Title {
+			if dbArticle.Title == invalidRequest.Title {
 				t.Error("バリデーションエラーの更新がデータベースに反映されています")
 			} else {
 				t.Logf("データベース確認: Title=%s (変更されていない)", dbArticle.Title)
@@ -79,10 +81,14 @@ func TestArticleUsecase_UpdateArticle(t *testing.T) {
 		})
 		
 		t.Run("存在しないタスクIDでの更新はエラーになる", func(t *testing.T) {
-			updateAttempt := model.Article{Title: "Valid Title", Content: "Valid Content"}
+			updateRequest := model.ArticleRequest{
+				Title:   "Valid Title", 
+				Content: "Valid Content",
+				UserId:  articleTestUser.ID,
+			}
 			t.Logf("存在しないID %d で記事更新を試行", nonExistentArticleID)
 		
-			_, err := articleUsecase.UpdateArticle(updateAttempt, articleTestUser.ID, nonExistentArticleID)
+			_, err := articleUsecase.UpdateArticle(updateRequest, articleTestUser.ID, nonExistentArticleID)
 			if err == nil {
 				t.Error("存在しないIDでの更新でエラーが返されませんでした")
 			} else {
@@ -96,8 +102,12 @@ func TestArticleUsecase_UpdateArticle(t *testing.T) {
 			t.Logf("他ユーザーの記事: ID=%d, Title=%s, UserId=%d", otherUserArticle.ID, otherUserArticle.Title, otherUserArticle.UserId)
 		
 			// 他ユーザーの記事を更新しようとする
-			updateAttempt := model.Article{Title: "Attempted Update", Content: "Attempted Content"}
-			_, err := articleUsecase.UpdateArticle(updateAttempt, articleTestUser.ID, otherUserArticle.ID)
+			updateRequest := model.ArticleRequest{
+				Title:   "Attempted Update", 
+				Content: "Attempted Content",
+				UserId:  articleTestUser.ID,
+			}
+			_, err := articleUsecase.UpdateArticle(updateRequest, articleTestUser.ID, otherUserArticle.ID)
 		
 			if err == nil {
 				t.Error("他のユーザーの記事更新でエラーが返されませんでした")

@@ -7,7 +7,7 @@ import (
 )
 
 type IArticleValidator interface {
-	ArticleValidate(article model.Article) error
+	ValidateArticleRequest(article model.ArticleRequest) error
 }
 
 type articleValidator struct{}
@@ -16,7 +16,7 @@ func NewArticleValidator() IArticleValidator {
 	return &articleValidator{}
 }
 
-func (av *articleValidator) ArticleValidate(article model.Article) error {
+func (av *articleValidator) ValidateArticleRequest(article model.ArticleRequest) error {
 	return validation.ValidateStruct(&article,
 		validation.Field(&article.Title, validation.Required.Error("タイトルは必須です")),
 	)

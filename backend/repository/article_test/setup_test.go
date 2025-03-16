@@ -16,9 +16,11 @@ var (
 )
 
 func setupArticleTest() {
+    // テスト用DBの設定
     articleDB = testutils.SetupTestDB()
     articleRepo = repository.NewArticleRepository(articleDB)
     
+    // テストユーザーの作成
     articleTestUser = testutils.CreateTestUser(articleDB)
     articleOtherUser = testutils.CreateOtherUser(articleDB)
 }
