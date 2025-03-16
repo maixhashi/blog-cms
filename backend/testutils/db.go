@@ -32,6 +32,8 @@ func SetupTestDB() *gorm.DB {
 		&model.Task{},
 		&model.Feed{},
 		&model.Article{},
+		&model.Layout{},
+		&model.LayoutComponent{},
 	)
 
 	return db
