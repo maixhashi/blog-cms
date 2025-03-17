@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/golang-jwt/jwt/v4"
 	"github.com/labstack/echo/v4"
 )
 
@@ -27,77 +26,81 @@ func NewLayoutController(lu usecase.ILayoutUsecase) ILayoutController {
 }
 
 func (lc *layoutController) GetAllLayouts(c echo.Context) error {
-	user := c.Get("user").(*jwt.Token)
-	claims := user.Claims.(jwt.MapClaims)
-	userId := claims["user_id"]
-
-	layoutsRes, err := lc.lu.GetAllLayouts(uint(userId.(float64)))
+	userId := getUserIdFromToken(c)
+	
+	layoutsRes, err := lc.lu.GetAllLayouts(userId)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err.Error())
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 	return c.JSON(http.StatusOK, layoutsRes)
 }
 
 func (lc *layoutController) GetLayoutById(c echo.Context) error {
-	user := c.Get("user").(*jwt.Token)
-	claims := user.Claims.(jwt.MapClaims)
-	userId := claims["user_id"]
+	userId := getUserIdFromToken(c)
+	
 	id := c.Param("layoutId")
-	layoutId, _ := strconv.Atoi(id)
-
-	layoutRes, err := lc.lu.GetLayoutById(uint(userId.(float64)), uint(layoutId))
+	layoutId, err := strconv.ParseUint(id, 10, 32)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err.Error())
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "無効なレイアウトIDです"})
+	}
+	
+	layoutRes, err := lc.lu.GetLayoutById(userId, uint(layoutId))
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 	return c.JSON(http.StatusOK, layoutRes)
 }
 
 func (lc *layoutController) CreateLayout(c echo.Context) error {
-	user := c.Get("user").(*jwt.Token)
-	claims := user.Claims.(jwt.MapClaims)
-	userId := claims["user_id"]
-
-	layout := model.Layout{}
-	if err := c.Bind(&layout); err != nil {
-		return c.JSON(http.StatusBadRequest, err.Error())
+	userId := getUserIdFromToken(c)
+	
+	var request model.LayoutRequest
+	if err := c.Bind(&request); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
 	}
-	layout.UserId = uint(userId.(float64))
-
-	layoutRes, err := lc.lu.CreateLayout(layout)
+	
+	request.UserId = userId
+	layoutRes, err := lc.lu.CreateLayout(request)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err.Error())
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 	return c.JSON(http.StatusCreated, layoutRes)
 }
 
 func (lc *layoutController) UpdateLayout(c echo.Context) error {
-	user := c.Get("user").(*jwt.Token)
-	claims := user.Claims.(jwt.MapClaims)
-	userId := claims["user_id"]
+	userId := getUserIdFromToken(c)
+	
 	id := c.Param("layoutId")
-	layoutId, _ := strconv.Atoi(id)
-
-	layout := model.Layout{}
-	if err := c.Bind(&layout); err != nil {
-		return c.JSON(http.StatusBadRequest, err.Error())
-	}
-	layoutRes, err := lc.lu.UpdateLayout(layout, uint(userId.(float64)), uint(layoutId))
+	layoutId, err := strconv.ParseUint(id, 10, 32)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err.Error())
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "無効なレイアウトIDです"})
+	}
+	
+	var request model.LayoutRequest
+	if err := c.Bind(&request); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+	}
+	
+	request.UserId = userId
+	layoutRes, err := lc.lu.UpdateLayout(request, userId, uint(layoutId))
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 	return c.JSON(http.StatusOK, layoutRes)
 }
 
 func (lc *layoutController) DeleteLayout(c echo.Context) error {
-	user := c.Get("user").(*jwt.Token)
-	claims := user.Claims.(jwt.MapClaims)
-	userId := claims["user_id"]
+	userId := getUserIdFromToken(c)
+	
 	id := c.Param("layoutId")
-	layoutId, _ := strconv.Atoi(id)
-
-	err := lc.lu.DeleteLayout(uint(userId.(float64)), uint(layoutId))
+	layoutId, err := strconv.ParseUint(id, 10, 32)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err.Error())
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "無効なレイアウトIDです"})
+	}
+	
+	err = lc.lu.DeleteLayout(userId, uint(layoutId))
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 	return c.NoContent(http.StatusNoContent)
 }

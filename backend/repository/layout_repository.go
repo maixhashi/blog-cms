@@ -9,8 +9,8 @@ import (
 )
 
 type ILayoutRepository interface {
-	GetAllLayouts(layouts *[]model.Layout, userId uint) error
-	GetLayoutById(layout *model.Layout, userId uint, layoutId uint) error
+	GetAllLayouts(userId uint) ([]model.Layout, error)
+	GetLayoutById(userId uint, layoutId uint) (model.Layout, error)
 	CreateLayout(layout *model.Layout) error
 	UpdateLayout(layout *model.Layout, userId uint, layoutId uint) error
 	DeleteLayout(userId uint, layoutId uint) error
@@ -24,18 +24,20 @@ func NewLayoutRepository(db *gorm.DB) ILayoutRepository {
 	return &layoutRepository{db}
 }
 
-func (lr *layoutRepository) GetAllLayouts(layouts *[]model.Layout, userId uint) error {
-	if err := lr.db.Joins("User").Where("user_id=?", userId).Order("layouts.created_at DESC").Find(layouts).Error; err != nil {
-		return err
+func (lr *layoutRepository) GetAllLayouts(userId uint) ([]model.Layout, error) {
+	var layouts []model.Layout
+	if err := lr.db.Where("user_id=?", userId).Order("created_at DESC").Find(&layouts).Error; err != nil {
+		return nil, err
 	}
-	return nil
+	return layouts, nil
 }
 
-func (lr *layoutRepository) GetLayoutById(layout *model.Layout, userId uint, layoutId uint) error {
-	if err := lr.db.Preload("Components").Joins("User").Where("user_id=?", userId).First(layout, layoutId).Error; err != nil {
-		return err
+func (lr *layoutRepository) GetLayoutById(userId uint, layoutId uint) (model.Layout, error) {
+	var layout model.Layout
+	if err := lr.db.Preload("Components").Where("user_id=?", userId).First(&layout, layoutId).Error; err != nil {
+		return model.Layout{}, err
 	}
-	return nil
+	return layout, nil
 }
 
 func (lr *layoutRepository) CreateLayout(layout *model.Layout) error {
@@ -46,9 +48,12 @@ func (lr *layoutRepository) CreateLayout(layout *model.Layout) error {
 }
 
 func (lr *layoutRepository) UpdateLayout(layout *model.Layout, userId uint, layoutId uint) error {
-	result := lr.db.Model(layout).Clauses(clause.Returning{}).Where("id=? AND user_id=?", layoutId, userId).Updates(map[string]interface{}{
-		"title": layout.Title,
-	})
+	result := lr.db.Model(&model.Layout{}).Clauses(clause.Returning{}).
+		Where("id=? AND user_id=?", layoutId, userId).
+		Updates(map[string]interface{}{
+			"title": layout.Title,
+		}).First(layout)
+	
 	if result.Error != nil {
 		return result.Error
 	}

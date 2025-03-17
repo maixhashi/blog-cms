@@ -9,8 +9,8 @@ import (
 type ILayoutUsecase interface {
 	GetAllLayouts(userId uint) ([]model.LayoutResponse, error)
 	GetLayoutById(userId uint, layoutId uint) (model.LayoutResponse, error)
-	CreateLayout(layout model.Layout) (model.LayoutResponse, error)
-	UpdateLayout(layout model.Layout, userId uint, layoutId uint) (model.LayoutResponse, error)
+	CreateLayout(request model.LayoutRequest) (model.LayoutResponse, error)
+	UpdateLayout(request model.LayoutRequest, userId uint, layoutId uint) (model.LayoutResponse, error)
 	DeleteLayout(userId uint, layoutId uint) error
 }
 
@@ -24,72 +24,52 @@ func NewLayoutUsecase(lr repository.ILayoutRepository, lv validator.ILayoutValid
 }
 
 func (lu *layoutUsecase) GetAllLayouts(userId uint) ([]model.LayoutResponse, error) {
-	layouts := []model.Layout{}
-	if err := lu.lr.GetAllLayouts(&layouts, userId); err != nil {
+	layouts, err := lu.lr.GetAllLayouts(userId)
+	if err != nil {
 		return nil, err
 	}
-	resLayouts := []model.LayoutResponse{}
-	for _, v := range layouts {
-		l := model.LayoutResponse{
-			ID:        v.ID,
-			Title:     v.Title,
-			CreatedAt: v.CreatedAt,
-			UpdatedAt: v.UpdatedAt,
-		}
-		resLayouts = append(resLayouts, l)
+	
+	responses := make([]model.LayoutResponse, len(layouts))
+	for i, layout := range layouts {
+		responses[i] = layout.ToResponse()
 	}
-	return resLayouts, nil
+	return responses, nil
 }
 
 func (lu *layoutUsecase) GetLayoutById(userId uint, layoutId uint) (model.LayoutResponse, error) {
-	layout := model.Layout{}
-	if err := lu.lr.GetLayoutById(&layout, userId, layoutId); err != nil {
+	layout, err := lu.lr.GetLayoutById(userId, layoutId)
+	if err != nil {
 		return model.LayoutResponse{}, err
 	}
-	resLayout := model.LayoutResponse{
-		ID:        layout.ID,
-		Title:     layout.Title,
-		CreatedAt: layout.CreatedAt,
-		UpdatedAt: layout.UpdatedAt,
-	}
-	return resLayout, nil
+	return layout.ToResponse(), nil
 }
 
-func (lu *layoutUsecase) CreateLayout(layout model.Layout) (model.LayoutResponse, error) {
-	if err := lu.lv.LayoutValidate(layout); err != nil {
+func (lu *layoutUsecase) CreateLayout(request model.LayoutRequest) (model.LayoutResponse, error) {
+	if err := lu.lv.ValidateLayoutRequest(request); err != nil {
 		return model.LayoutResponse{}, err
 	}
+	
+	layout := request.ToModel()
 	if err := lu.lr.CreateLayout(&layout); err != nil {
 		return model.LayoutResponse{}, err
 	}
-	resLayout := model.LayoutResponse{
-		ID:        layout.ID,
-		Title:     layout.Title,
-		CreatedAt: layout.CreatedAt,
-		UpdatedAt: layout.UpdatedAt,
-	}
-	return resLayout, nil
+	
+	return layout.ToResponse(), nil
 }
 
-func (lu *layoutUsecase) UpdateLayout(layout model.Layout, userId uint, layoutId uint) (model.LayoutResponse, error) {
-	if err := lu.lv.LayoutValidate(layout); err != nil {
+func (lu *layoutUsecase) UpdateLayout(request model.LayoutRequest, userId uint, layoutId uint) (model.LayoutResponse, error) {
+	if err := lu.lv.ValidateLayoutRequest(request); err != nil {
 		return model.LayoutResponse{}, err
 	}
+	
+	layout := request.ToModel()
 	if err := lu.lr.UpdateLayout(&layout, userId, layoutId); err != nil {
 		return model.LayoutResponse{}, err
 	}
-	resLayout := model.LayoutResponse{
-		ID:        layout.ID,
-		Title:     layout.Title,
-		CreatedAt: layout.CreatedAt,
-		UpdatedAt: layout.UpdatedAt,
-	}
-	return resLayout, nil
+	
+	return layout.ToResponse(), nil
 }
 
 func (lu *layoutUsecase) DeleteLayout(userId uint, layoutId uint) error {
-	if err := lu.lr.DeleteLayout(userId, layoutId); err != nil {
-		return err
-	}
-	return nil
+	return lu.lr.DeleteLayout(userId, layoutId)
 }
