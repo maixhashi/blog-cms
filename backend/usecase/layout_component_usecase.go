@@ -9,26 +9,15 @@ import (
 type ILayoutComponentUsecase interface {
 	GetAllLayoutComponents(userId uint) ([]model.LayoutComponentResponse, error)
 	GetLayoutComponentById(userId uint, componentId uint) (model.LayoutComponentResponse, error)
-	CreateLayoutComponent(component model.LayoutComponent) (model.LayoutComponentResponse, error)
-	UpdateLayoutComponent(component model.LayoutComponent, userId uint, componentId uint) (model.LayoutComponentResponse, error)
+	CreateLayoutComponent(request model.LayoutComponentRequest) (model.LayoutComponentResponse, error)
+	UpdateLayoutComponent(request model.LayoutComponentRequest, userId uint, componentId uint) (model.LayoutComponentResponse, error)
 	DeleteLayoutComponent(userId uint, componentId uint) error
 	
-	AssignToLayout(userId uint, componentId uint, layoutId uint, position map[string]int) error
+	AssignToLayout(userId uint, componentId uint, request model.AssignLayoutRequest) error
 	RemoveFromLayout(userId uint, componentId uint) error
-	UpdatePosition(userId uint, componentId uint, position map[string]int) error
+	UpdatePosition(userId uint, componentId uint, position model.PositionRequest) error
 }
 
-func (lcu *layoutComponentUsecase) AssignToLayout(userId uint, componentId uint, layoutId uint, position map[string]int) error {
-	return lcu.lcr.AssignToLayout(componentId, layoutId, userId, position)
-}
-
-func (lcu *layoutComponentUsecase) RemoveFromLayout(userId uint, componentId uint) error {
-	return lcu.lcr.RemoveFromLayout(componentId, userId)
-}
-
-func (lcu *layoutComponentUsecase) UpdatePosition(userId uint, componentId uint, position map[string]int) error {
-	return lcu.lcr.UpdatePosition(componentId, userId, position)
-}
 type layoutComponentUsecase struct {
 	lcr repository.ILayoutComponentRepository
 	lcv validator.ILayoutComponentValidator
@@ -39,80 +28,64 @@ func NewLayoutComponentUsecase(lcr repository.ILayoutComponentRepository, lcv va
 }
 
 func (lcu *layoutComponentUsecase) GetAllLayoutComponents(userId uint) ([]model.LayoutComponentResponse, error) {
-	components := []model.LayoutComponent{}
-	if err := lcu.lcr.GetAllLayoutComponents(&components, userId); err != nil {
+	components, err := lcu.lcr.GetAllLayoutComponents(userId)
+	if err != nil {
 		return nil, err
 	}
-	resComponents := []model.LayoutComponentResponse{}
-	for _, v := range components {
-		c := model.LayoutComponentResponse{
-			ID:        v.ID,
-			Name:      v.Name,
-			Type:      v.Type,
-			Content:   v.Content,
-			CreatedAt: v.CreatedAt,
-			UpdatedAt: v.UpdatedAt,
-		}
-		resComponents = append(resComponents, c)
+	
+	responses := make([]model.LayoutComponentResponse, len(components))
+	for i, component := range components {
+		responses[i] = component.ToResponse()
 	}
-	return resComponents, nil
+	return responses, nil
 }
 
 func (lcu *layoutComponentUsecase) GetLayoutComponentById(userId uint, componentId uint) (model.LayoutComponentResponse, error) {
-	component := model.LayoutComponent{}
-	if err := lcu.lcr.GetLayoutComponentById(&component, userId, componentId); err != nil {
+	component, err := lcu.lcr.GetLayoutComponentById(userId, componentId)
+	if err != nil {
 		return model.LayoutComponentResponse{}, err
 	}
-	resComponent := model.LayoutComponentResponse{
-		ID:        component.ID,
-		Name:      component.Name,
-		Type:      component.Type,
-		Content:   component.Content,
-		CreatedAt: component.CreatedAt,
-		UpdatedAt: component.UpdatedAt,
-	}
-	return resComponent, nil
+	return component.ToResponse(), nil
 }
 
-func (lcu *layoutComponentUsecase) CreateLayoutComponent(component model.LayoutComponent) (model.LayoutComponentResponse, error) {
-	if err := lcu.lcv.LayoutComponentValidate(component); err != nil {
+func (lcu *layoutComponentUsecase) CreateLayoutComponent(request model.LayoutComponentRequest) (model.LayoutComponentResponse, error) {
+	if err := lcu.lcv.ValidateLayoutComponentRequest(request); err != nil {
 		return model.LayoutComponentResponse{}, err
 	}
+	
+	component := request.ToModel()
 	if err := lcu.lcr.CreateLayoutComponent(&component); err != nil {
 		return model.LayoutComponentResponse{}, err
 	}
-	resComponent := model.LayoutComponentResponse{
-		ID:        component.ID,
-		Name:      component.Name,
-		Type:      component.Type,
-		Content:   component.Content,
-		CreatedAt: component.CreatedAt,
-		UpdatedAt: component.UpdatedAt,
-	}
-	return resComponent, nil
+	
+	return component.ToResponse(), nil
 }
 
-func (lcu *layoutComponentUsecase) UpdateLayoutComponent(component model.LayoutComponent, userId uint, componentId uint) (model.LayoutComponentResponse, error) {
-	if err := lcu.lcv.LayoutComponentValidate(component); err != nil {
+func (lcu *layoutComponentUsecase) UpdateLayoutComponent(request model.LayoutComponentRequest, userId uint, componentId uint) (model.LayoutComponentResponse, error) {
+	if err := lcu.lcv.ValidateLayoutComponentRequest(request); err != nil {
 		return model.LayoutComponentResponse{}, err
 	}
+	
+	component := request.ToModel()
 	if err := lcu.lcr.UpdateLayoutComponent(&component, userId, componentId); err != nil {
 		return model.LayoutComponentResponse{}, err
 	}
-	resComponent := model.LayoutComponentResponse{
-		ID:        component.ID,
-		Name:      component.Name,
-		Type:      component.Type,
-		Content:   component.Content,
-		CreatedAt: component.CreatedAt,
-		UpdatedAt: component.UpdatedAt,
-	}
-	return resComponent, nil
+	
+	return component.ToResponse(), nil
 }
 
 func (lcu *layoutComponentUsecase) DeleteLayoutComponent(userId uint, componentId uint) error {
-	if err := lcu.lcr.DeleteLayoutComponent(userId, componentId); err != nil {
-		return err
-	}
-	return nil
+	return lcu.lcr.DeleteLayoutComponent(userId, componentId)
+}
+
+func (lcu *layoutComponentUsecase) AssignToLayout(userId uint, componentId uint, request model.AssignLayoutRequest) error {
+	return lcu.lcr.AssignToLayout(componentId, request.LayoutId, userId, request.Position)
+}
+
+func (lcu *layoutComponentUsecase) RemoveFromLayout(userId uint, componentId uint) error {
+	return lcu.lcr.RemoveFromLayout(componentId, userId)
+}
+
+func (lcu *layoutComponentUsecase) UpdatePosition(userId uint, componentId uint, position model.PositionRequest) error {
+	return lcu.lcr.UpdatePosition(componentId, userId, position)
 }
