@@ -1,22 +1,22 @@
 package repository
 
 import (
-	"fmt"
 	"errors"
+	"fmt"
 	"go-react-app/model"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
 type ILayoutComponentRepository interface {
-	GetAllLayoutComponents(components *[]model.LayoutComponent, userId uint) error
-	GetLayoutComponentById(component *model.LayoutComponent, userId uint, componentId uint) error
+	GetAllLayoutComponents(userId uint) ([]model.LayoutComponent, error)
+	GetLayoutComponentById(userId uint, componentId uint) (model.LayoutComponent, error)
 	CreateLayoutComponent(component *model.LayoutComponent) error
 	UpdateLayoutComponent(component *model.LayoutComponent, userId uint, componentId uint) error
 	DeleteLayoutComponent(userId uint, componentId uint) error
-	AssignToLayout(componentId uint, layoutId uint, userId uint, position map[string]int) error
+	AssignToLayout(componentId uint, layoutId uint, userId uint, position model.PositionRequest) error
 	RemoveFromLayout(componentId uint, userId uint) error
-	UpdatePosition(componentId uint, userId uint, position map[string]int) error
+	UpdatePosition(componentId uint, userId uint, position model.PositionRequest) error
 }
 
 type layoutComponentRepository struct {
@@ -27,18 +27,20 @@ func NewLayoutComponentRepository(db *gorm.DB) ILayoutComponentRepository {
 	return &layoutComponentRepository{db}
 }
 
-func (lcr *layoutComponentRepository) GetAllLayoutComponents(components *[]model.LayoutComponent, userId uint) error {
-	if err := lcr.db.Joins("User").Where("user_id=?", userId).Order("layout_components.created_at DESC").Find(components).Error; err != nil {
-		return err
+func (lcr *layoutComponentRepository) GetAllLayoutComponents(userId uint) ([]model.LayoutComponent, error) {
+	var components []model.LayoutComponent
+	if err := lcr.db.Where("user_id=?", userId).Order("created_at DESC").Find(&components).Error; err != nil {
+		return nil, err
 	}
-	return nil
+	return components, nil
 }
 
-func (lcr *layoutComponentRepository) GetLayoutComponentById(component *model.LayoutComponent, userId uint, componentId uint) error {
-	if err := lcr.db.Joins("User").Where("user_id=?", userId).First(component, componentId).Error; err != nil {
-		return err
+func (lcr *layoutComponentRepository) GetLayoutComponentById(userId uint, componentId uint) (model.LayoutComponent, error) {
+	var component model.LayoutComponent
+	if err := lcr.db.Where("user_id=?", userId).First(&component, componentId).Error; err != nil {
+		return model.LayoutComponent{}, err
 	}
-	return nil
+	return component, nil
 }
 
 func (lcr *layoutComponentRepository) CreateLayoutComponent(component *model.LayoutComponent) error {
@@ -49,11 +51,14 @@ func (lcr *layoutComponentRepository) CreateLayoutComponent(component *model.Lay
 }
 
 func (lcr *layoutComponentRepository) UpdateLayoutComponent(component *model.LayoutComponent, userId uint, componentId uint) error {
-	result := lcr.db.Model(component).Clauses(clause.Returning{}).Where("id=? AND user_id=?", componentId, userId).Updates(map[string]interface{}{
-		"name":    component.Name,
-		"type":    component.Type,
-		"content": component.Content,
-	})
+	result := lcr.db.Model(&model.LayoutComponent{}).Clauses(clause.Returning{}).
+		Where("id=? AND user_id=?", componentId, userId).
+		Updates(map[string]interface{}{
+			"name":    component.Name,
+			"type":    component.Type,
+			"content": component.Content,
+		}).First(component)
+	
 	if result.Error != nil {
 		return result.Error
 	}
@@ -73,8 +78,9 @@ func (lcr *layoutComponentRepository) DeleteLayoutComponent(userId uint, compone
 	}
 	return nil
 }
-func (lcr *layoutComponentRepository) AssignToLayout(componentId uint, layoutId uint, userId uint, position map[string]int) error {
-    // まずコンポーネントを取得（順序を変更）
+
+func (lcr *layoutComponentRepository) AssignToLayout(componentId uint, layoutId uint, userId uint, position model.PositionRequest) error {
+    // まずコンポーネントを取得
     var component model.LayoutComponent
     if err := lcr.db.Where("id = ? AND user_id = ?", componentId, userId).First(&component).Error; err != nil {
         if err == gorm.ErrRecordNotFound {
@@ -96,15 +102,15 @@ func (lcr *layoutComponentRepository) AssignToLayout(componentId uint, layoutId 
     component.LayoutId = &layoutId
     
     // 位置情報を設定
-    component.X = position["x"]
-    component.Y = position["y"]
+    component.X = position.X
+    component.Y = position.Y
     
     // 幅と高さを設定（もし提供されていれば）
-    if width, ok := position["width"]; ok {
-        component.Width = width
+    if position.Width != 0 {
+        component.Width = position.Width
     }
-    if height, ok := position["height"]; ok {
-        component.Height = height
+    if position.Height != 0 {
+        component.Height = position.Height
     }
     
     // 保存
@@ -114,6 +120,7 @@ func (lcr *layoutComponentRepository) AssignToLayout(componentId uint, layoutId 
     
     return nil
 }
+
 func (lcr *layoutComponentRepository) RemoveFromLayout(componentId uint, userId uint) error {
     var component model.LayoutComponent
     if err := lcr.db.Where("id = ? AND user_id = ?", componentId, userId).First(&component).Error; err != nil {
@@ -138,7 +145,7 @@ func (lcr *layoutComponentRepository) RemoveFromLayout(componentId uint, userId 
     return nil
 }
 
-func (lcr *layoutComponentRepository) UpdatePosition(componentId uint, userId uint, position map[string]int) error {
+func (lcr *layoutComponentRepository) UpdatePosition(componentId uint, userId uint, position model.PositionRequest) error {
     var component model.LayoutComponent
     if err := lcr.db.Where("id = ? AND user_id = ?", componentId, userId).First(&component).Error; err != nil {
         if err == gorm.ErrRecordNotFound {
@@ -153,15 +160,15 @@ func (lcr *layoutComponentRepository) UpdatePosition(componentId uint, userId ui
     }
     
     // 位置情報を更新
-    component.X = position["x"]
-    component.Y = position["y"]
+    component.X = position.X
+    component.Y = position.Y
     
     // 幅と高さを更新（もし提供されていれば）
-    if width, ok := position["width"]; ok {
-        component.Width = width
+    if position.Width != 0 {
+        component.Width = position.Width
     }
-    if height, ok := position["height"]; ok {
-        component.Height = height
+    if position.Height != 0 {
+        component.Height = position.Height
     }
     
     // 保存
