@@ -39,12 +39,12 @@ func setupLayoutUsecaseTest() {
 
 // テスト用のレイアウトを作成
 func createTestLayout(t *testing.T, title string) model.LayoutResponse {
-	layout := model.Layout{
+	layoutRequest := model.LayoutRequest{
 		Title:  title,
 		UserId: testUserId,
 	}
 
-	createdLayout, err := layoutUsecase.CreateLayout(layout)
+	createdLayout, err := layoutUsecase.CreateLayout(layoutRequest)
 	if err != nil {
 		t.Fatalf("テストレイアウトの作成に失敗しました: %v", err)
 	}

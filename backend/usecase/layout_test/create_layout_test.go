@@ -12,15 +12,15 @@ func TestLayoutUsecase_CreateLayout(t *testing.T) {
 		t.Run("新規レイアウトを作成できる", func(t *testing.T) {
 			// テスト用のレイアウト
 			title := generateUniqueTitle()
-			layout := model.Layout{
+			layoutRequest := model.LayoutRequest{
 				Title:  title,
 				UserId: testUserId,
 			}
 
-			t.Logf("レイアウト作成: Title=%s", layout.Title)
+			t.Logf("レイアウト作成: Title=%s", layoutRequest.Title)
 
 			// テスト実行
-			createdLayout, err := layoutUsecase.CreateLayout(layout)
+			createdLayout, err := layoutUsecase.CreateLayout(layoutRequest)
 
 			// 検証
 			if err != nil {
@@ -50,7 +50,7 @@ func TestLayoutUsecase_CreateLayout(t *testing.T) {
 	t.Run("異常系", func(t *testing.T) {
 		t.Run("バリデーションエラーが発生する場合はレイアウト作成に失敗する", func(t *testing.T) {
 			// 空のタイトル（バリデーションエラーになるはず）
-			invalidLayout := model.Layout{
+			invalidLayout := model.LayoutRequest{
 				Title:  "",
 				UserId: testUserId,
 			}

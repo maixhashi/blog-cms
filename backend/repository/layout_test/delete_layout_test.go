@@ -1,7 +1,6 @@
 package layout_test
 
 import (
-	"go-react-app/model"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -19,8 +18,7 @@ func TestLayoutRepository_DeleteLayout(t *testing.T) {
 		assert.NoError(t, err)
 		
 		// 削除されたことを確認
-		var deletedLayout model.Layout
-		err = layoutRepo.GetLayoutById(&deletedLayout, testUserData.ID, layout.ID)
+		_, err = layoutRepo.GetLayoutById(testUserData.ID, layout.ID)
 		assert.Error(t, err)
 		assert.Contains(t, err.Error(), "record not found")
 	})

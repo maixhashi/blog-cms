@@ -15,7 +15,7 @@ func TestLayoutUsecase_UpdateLayout(t *testing.T) {
 
 			// 更新用のデータ
 			newTitle := generateUniqueTitle() + " Updated"
-			updateLayout := model.Layout{
+			updateLayoutRequest := model.LayoutRequest{
 				Title:  newTitle,
 				UserId: testUserId,
 			}
@@ -23,7 +23,7 @@ func TestLayoutUsecase_UpdateLayout(t *testing.T) {
 			t.Logf("レイアウト更新: ID=%d, 新Title=%s", originalLayout.ID, newTitle)
 
 			// テスト実行
-			updatedLayout, err := layoutUsecase.UpdateLayout(updateLayout, testUserId, originalLayout.ID)
+			updatedLayout, err := layoutUsecase.UpdateLayout(updateLayoutRequest, testUserId, originalLayout.ID)
 
 			// 検証
 			if err != nil {
@@ -54,7 +54,7 @@ func TestLayoutUsecase_UpdateLayout(t *testing.T) {
 			layout := createTestLayout(t, generateUniqueTitle())
 
 			// 空のタイトル（バリデーションエラーになるはず）
-			invalidLayout := model.Layout{
+			invalidLayout := model.LayoutRequest{
 				Title:  "",
 				UserId: testUserId,
 			}
@@ -76,7 +76,7 @@ func TestLayoutUsecase_UpdateLayout(t *testing.T) {
 			// 存在しないレイアウトID
 			nonExistLayoutId := uint(9999)
 
-			updateLayout := model.Layout{
+			updateLayout := model.LayoutRequest{
 				Title:  generateUniqueTitle(),
 				UserId: testUserId,
 			}
@@ -99,7 +99,7 @@ func TestLayoutUsecase_UpdateLayout(t *testing.T) {
 			// 別のユーザーID
 			otherUserId := uint(999)
 
-			updateLayout := model.Layout{
+			updateLayout := model.LayoutRequest{
 				Title:  generateUniqueTitle(),
 				UserId: otherUserId,
 			}
