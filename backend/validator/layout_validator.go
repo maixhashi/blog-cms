@@ -7,7 +7,7 @@ import (
 )
 
 type ILayoutValidator interface {
-	LayoutValidate(layout model.Layout) error
+	ValidateLayoutRequest(layout model.LayoutRequest) error
 }
 
 type layoutValidator struct{}
@@ -16,7 +16,7 @@ func NewLayoutValidator() ILayoutValidator {
 	return &layoutValidator{}
 }
 
-func (lv *layoutValidator) LayoutValidate(layout model.Layout) error {
+func (lv *layoutValidator) ValidateLayoutRequest(layout model.LayoutRequest) error {
 	return validation.ValidateStruct(&layout,
 		validation.Field(&layout.Title, validation.Required.Error("タイトルは必須です")),
 	)
