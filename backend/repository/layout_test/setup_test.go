@@ -30,9 +30,9 @@ func setupLayoutRepositoryTest() {
 		Password: "password123",
 	}
 	userRepo.CreateUser(&testUserData)
-		// テスト用レイアウトデータを初期化
-		testLayoutData = model.Layout{
-			Title:  "Test Layout",
-			UserId: testUserData.ID,
-		}
+	// テスト用レイアウトデータを初期化
+	testLayoutData = model.Layout{
+		Title:  "Test Layout",
+		UserId: testUserData.ID,
 	}
+}

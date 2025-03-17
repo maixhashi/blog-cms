@@ -1,7 +1,6 @@
 package layout_test
 
 import (
-	"go-react-app/model"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -20,8 +19,7 @@ func TestLayoutRepository_GetAllLayouts(t *testing.T) {
 		assert.NoError(t, err1)
 		assert.NoError(t, err2)
 		
-		var layouts []model.Layout
-		err := layoutRepo.GetAllLayouts(&layouts, testUserData.ID)
+		layouts, err := layoutRepo.GetAllLayouts(testUserData.ID)
 		
 		assert.NoError(t, err)
 		assert.GreaterOrEqual(t, len(layouts), 2)
@@ -34,8 +32,7 @@ func TestLayoutRepository_GetAllLayouts(t *testing.T) {
 		err := layoutRepo.CreateLayout(&layout)
 		assert.NoError(t, err)
 		
-		var layouts []model.Layout
-		err = layoutRepo.GetAllLayouts(&layouts, nonExistentUserId)
+		layouts, err := layoutRepo.GetAllLayouts(nonExistentUserId)
 		
 		assert.NoError(t, err)
 		// 現在の実装では空ではなく結果が返されることを確認
@@ -51,8 +48,7 @@ func TestLayoutRepository_GetLayoutById(t *testing.T) {
 		layout, err := createTestLayout()
 		assert.NoError(t, err)
 		
-		var foundLayout model.Layout
-		err = layoutRepo.GetLayoutById(&foundLayout, testUserData.ID, layout.ID)
+		foundLayout, err := layoutRepo.GetLayoutById(testUserData.ID, layout.ID)
 		
 		assert.NoError(t, err)
 		assert.Equal(t, layout.ID, foundLayout.ID)
@@ -61,8 +57,7 @@ func TestLayoutRepository_GetLayoutById(t *testing.T) {
 	})
 
 	t.Run("存在しないレイアウトIDの場合はエラーを返す", func(t *testing.T) {
-		var layout model.Layout
-		err := layoutRepo.GetLayoutById(&layout, testUserData.ID, 9999)
+		_, err := layoutRepo.GetLayoutById(testUserData.ID, 9999)
 		
 		assert.Error(t, err)
 		assert.Contains(t, err.Error(), "record not found")
@@ -72,8 +67,7 @@ func TestLayoutRepository_GetLayoutById(t *testing.T) {
 		layout, err := createTestLayout()
 		assert.NoError(t, err)
 		
-		var foundLayout model.Layout
-		err = layoutRepo.GetLayoutById(&foundLayout, 9999, layout.ID)
+		_, err = layoutRepo.GetLayoutById(9999, layout.ID)
 		
 		assert.Error(t, err)
 		assert.Contains(t, err.Error(), "record not found")

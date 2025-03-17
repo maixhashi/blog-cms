@@ -48,7 +48,18 @@ func (lr *layoutRepository) CreateLayout(layout *model.Layout) error {
 }
 
 func (lr *layoutRepository) UpdateLayout(layout *model.Layout, userId uint, layoutId uint) error {
-	result := lr.db.Model(&model.Layout{}).Clauses(clause.Returning{}).
+	// まず、レイアウトが存在するか確認
+	var existingLayout model.Layout
+	result := lr.db.Where("id=? AND user_id=?", layoutId, userId).First(&existingLayout)
+	if result.Error != nil {
+		if result.Error.Error() == "record not found" {
+			return fmt.Errorf("layout does not exist")
+		}
+		return result.Error
+	}
+	
+	// 更新処理
+	result = lr.db.Model(&model.Layout{}).Clauses(clause.Returning{}).
 		Where("id=? AND user_id=?", layoutId, userId).
 		Updates(map[string]interface{}{
 			"title": layout.Title,
@@ -62,7 +73,6 @@ func (lr *layoutRepository) UpdateLayout(layout *model.Layout, userId uint, layo
 	}
 	return nil
 }
-
 func (lr *layoutRepository) DeleteLayout(userId uint, layoutId uint) error {
 	result := lr.db.Where("id=? AND user_id=?", layoutId, userId).Delete(&model.Layout{})
 	if result.Error != nil {
