@@ -3,6 +3,7 @@ package main_entry_module
 import (
 	"fmt"
 	"os"
+	"log"
 )
 
 // StartServer はサーバーを起動します
@@ -22,6 +23,11 @@ func (m *MainEntryPackage) StartServer(port ...string) error {
 	
 	// ルーターを初期化
 	e := m.InitRouter()
+	
+	// Swaggerが有効な場合、ログに表示
+	if m.SwaggerEnabled {
+		log.Printf("Swagger UI available at http://localhost:%s/swagger/index.html", serverPort)
+	}
 	
 	// サーバー起動
 	return e.Start(fmt.Sprintf(":%s", serverPort))
