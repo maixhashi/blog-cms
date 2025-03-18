@@ -9,7 +9,7 @@ import { useQueryTasks } from '../hooks/useQueryTasks'
 import { useMutateTask } from '../hooks/useMutateTask'
 import { useMutateAuth } from '../hooks/useMutateAuth'
 import { TaskItem } from './TaskItem'
-import '../Todo.css' // ← CSS をインポート
+import '../Todo.css'
 
 export const Todo = () => {
   const queryClient = useQueryClient()
@@ -62,9 +62,12 @@ export const Todo = () => {
       ) : (
         <ul className="task-list">
           {data?.map((task) => (
-            <li key={task.id} className="task-item">
-              <TaskItem id={task.id} title={task.title} />
-            </li>
+            // task.idとtask.titleが存在する場合のみTaskItemをレンダリング
+            task.id !== undefined && task.title !== undefined ? (
+              <li key={task.id} className="task-item">
+                <TaskItem id={task.id} title={task.title} />
+              </li>
+            ) : null
           ))}
         </ul>
       )}

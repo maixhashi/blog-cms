@@ -6,6 +6,7 @@ import { useError } from '../hooks/useError'
 export const useQueryTasks = () => {
   const { switchErrorHandling } = useError()
   const getTasks = async () => {
+    // 戻り値の型をTaskの配列として明示
     const { data } = await axios.get<Task[]>(
       `${process.env.REACT_APP_API_URL}/tasks`,
       { withCredentials: true }

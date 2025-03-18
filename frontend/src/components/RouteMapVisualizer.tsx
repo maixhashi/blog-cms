@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { routes, RouteNode } from '../constants/routeMap';
+import { routes } from '../constants/routeMap';
 import * as d3 from 'd3';
 
 interface Node extends d3.SimulationNodeDatum {
@@ -16,10 +16,11 @@ const RouteMapVisualizer: React.FC = () => {
   const svgRef = useRef<SVGSVGElement>(null);
 
   useEffect(() => {
-    if (!svgRef.current) return;
+    const currentSvgRef = svgRef.current;
+    if (!currentSvgRef) return;
 
     // 既存のSVG内容をクリア
-    d3.select(svgRef.current).selectAll('*').remove();
+    d3.select(currentSvgRef).selectAll('*').remove();
 
     // ノードとリンクのデータを準備
     const nodes: Node[] = routes.map(route => ({
@@ -37,7 +38,7 @@ const RouteMapVisualizer: React.FC = () => {
     // SVGサイズの設定
     const width = 800;
     const height = 600;
-    const svg = d3.select(svgRef.current)
+    const svg = d3.select(currentSvgRef)
       .attr('width', width)
       .attr('height', height);
 
@@ -123,10 +124,11 @@ const RouteMapVisualizer: React.FC = () => {
     return () => {
       // クリーンアップ関数を強化
       simulation.stop();
-      d3.select(svgRef.current).selectAll('*').remove();
+      if (currentSvgRef) {
+        d3.select(currentSvgRef).selectAll('*').remove();
+      }
     };
   }, []); // 依存配列は空のままで
-
   return (
     <div className="route-map-container">
       <h2>画面遷移図</h2>
