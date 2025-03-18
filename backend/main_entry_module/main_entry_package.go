@@ -5,6 +5,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// MainEntryPackage はアプリケーションの主要コンポーネントを保持する構造体
 type MainEntryPackage struct {
 	UserController            controller.IUserController
 	TaskController            controller.ITaskController 
@@ -16,10 +17,16 @@ type MainEntryPackage struct {
 	QiitaController           controller.IQiitaController
 	HatenaController          controller.IHatenaController
 	FeedArticleController     controller.IFeedArticleController
+	
+	// Swaggerハンドラーを追加（オプション）
+	SwaggerEnabled            bool
 }
 
+// NewMainEntryPackage は新しいMainEntryPackageインスタンスを作成する
 func NewMainEntryPackage(db *gorm.DB) *MainEntryPackage {
-	entry := &MainEntryPackage{}
+	entry := &MainEntryPackage{
+		SwaggerEnabled: true, // デフォルトで有効
+	}
 	
 	// 各モジュールの初期化
 	entry.initUserModule(db)

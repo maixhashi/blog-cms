@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { useQueryClient, useMutation } from '@tanstack/react-query'
-import { Task } from '../types'
+import { Task, TaskRequest } from '../types'
 import useStore from '../store'
 import { useError } from '../hooks/useError'
 
@@ -10,7 +10,7 @@ export const useMutateTask = () => {
   const resetEditedTask = useStore((state) => state.resetEditedTask)
 
   const createTaskMutation = useMutation(
-    (task: Omit<Task, 'id' | 'created_at' | 'updated_at'>) =>
+    (task: TaskRequest) =>
       axios.post<Task>(`${process.env.REACT_APP_API_URL}/tasks`, task),
     {
       onSuccess: (res) => {
@@ -30,7 +30,7 @@ export const useMutateTask = () => {
     }
   )
   const updateTaskMutation = useMutation(
-    (task: Omit<Task, 'created_at' | 'updated_at'>) =>
+    (task: TaskRequest & { id: number }) =>
       axios.put<Task>(`${process.env.REACT_APP_API_URL}/tasks/${task.id}`, {
         title: task.title,
       }),

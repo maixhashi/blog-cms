@@ -5,7 +5,11 @@ import { Task } from '../types'
 import { useMutateTask } from '../hooks/useMutateTask'
 import '../TaskItem.css'
 
-const TaskItemMemo: FC<Omit<Task, 'created_at' | 'updated_at'>> = ({
+// Taskから必要なプロパティのみを取り出す
+// 明示的に型を非オプショナルにする
+type TaskItemProps = Required<Pick<Task, 'id' | 'title'>>
+
+const TaskItemMemo: FC<TaskItemProps> = ({
   id,
   title,
 }) => {

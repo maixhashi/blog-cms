@@ -2,31 +2,31 @@ package model
 
 import "time"
 
-// データベースモデル
+// Task データベースのタスクモデル
 type Task struct {
-	ID        uint      `json:"id" gorm:"primaryKey"`
-	Title     string    `json:"title" gorm:"not null"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	ID        uint      `json:"id" gorm:"primaryKey" example:"1"`
+	Title     string    `json:"title" gorm:"not null" example:"買い物に行く"`
+	CreatedAt time.Time `json:"created_at" example:"2023-01-01T00:00:00Z"`
+	UpdatedAt time.Time `json:"updated_at" example:"2023-01-01T00:00:00Z"`
 	User      User      `json:"-" gorm:"foreignKey:UserId; constraint:OnDelete:CASCADE"`
-	UserId    uint      `json:"user_id" gorm:"not null"`
+	UserId    uint      `json:"user_id" gorm:"not null" example:"1"`
 }
 
-// リクエスト用の構造体
+// TaskRequest タスク作成・更新リクエスト
 type TaskRequest struct {
-	Title  string `json:"title" validate:"required,max=100"`
+	Title  string `json:"title" validate:"required,max=100" example:"買い物に行く"`
 	UserId uint   `json:"-"` // クライアントからは送信されず、JWTから取得
 }
 
-// レスポンス用の構造体
+// TaskResponse タスクのレスポンス
 type TaskResponse struct {
-	ID        uint      `json:"id"`
-	Title     string    `json:"title"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	ID        uint      `json:"id" example:"1"`
+	Title     string    `json:"title" example:"買い物に行く"`
+	CreatedAt time.Time `json:"created_at" example:"2023-01-01T00:00:00Z"`
+	UpdatedAt time.Time `json:"updated_at" example:"2023-01-01T00:00:00Z"`
 }
 
-// TaskからTaskResponseへの変換メソッド
+// ToResponse TaskからTaskResponseへの変換メソッド
 func (t *Task) ToResponse() TaskResponse {
 	return TaskResponse{
 		ID:        t.ID,
@@ -36,7 +36,7 @@ func (t *Task) ToResponse() TaskResponse {
 	}
 }
 
-// TaskRequestからTaskへの変換メソッド
+// ToModel TaskRequestからTaskへの変換メソッド
 func (tr *TaskRequest) ToModel() Task {
 	return Task{
 		Title:  tr.Title,

@@ -9,6 +9,11 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+// TaskController タスク関連のAPIを管理するコントローラー
+// @title Blog CMS API
+// @version 1.0
+// @description ブログCMSのAPI
+// @BasePath /api
 type ITaskController interface {
 	GetAllTasks(c echo.Context) error
 	GetTaskById(c echo.Context) error
@@ -25,6 +30,15 @@ func NewTaskController(tu usecase.ITaskUsecase) ITaskController {
 	return &taskController{tu}
 }
 
+// GetAllTasks ユーザーのすべてのタスクを取得
+// @Summary ユーザーのタスク一覧を取得
+// @Description ログインユーザーのすべてのタスクを取得する
+// @Tags tasks
+// @Accept json
+// @Produce json
+// @Success 200 {array} model.TaskResponse
+// @Failure 500 {object} map[string]string
+// @Router /tasks [get]
 func (tc *taskController) GetAllTasks(c echo.Context) error {
 	userId := getUserIdFromToken(c)
 	
@@ -35,6 +49,17 @@ func (tc *taskController) GetAllTasks(c echo.Context) error {
 	return c.JSON(http.StatusOK, tasksRes)
 }
 
+// GetTaskById 指定されたIDのタスクを取得
+// @Summary 特定のタスクを取得
+// @Description 指定されたIDのタスクを取得する
+// @Tags tasks
+// @Accept json
+// @Produce json
+// @Param taskId path int true "タスクID"
+// @Success 200 {object} model.TaskResponse
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /tasks/{taskId} [get]
 func (tc *taskController) GetTaskById(c echo.Context) error {
 	userId := getUserIdFromToken(c)
 	
@@ -51,6 +76,17 @@ func (tc *taskController) GetTaskById(c echo.Context) error {
 	return c.JSON(http.StatusOK, taskRes)
 }
 
+// CreateTask 新しいタスクを作成
+// @Summary 新しいタスクを作成
+// @Description ユーザーの新しいタスクを作成する
+// @Tags tasks
+// @Accept json
+// @Produce json
+// @Param task body model.TaskRequest true "タスク情報"
+// @Success 201 {object} model.TaskResponse
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /tasks [post]
 func (tc *taskController) CreateTask(c echo.Context) error {
 	userId := getUserIdFromToken(c)
 	
@@ -67,6 +103,18 @@ func (tc *taskController) CreateTask(c echo.Context) error {
 	return c.JSON(http.StatusCreated, taskRes)
 }
 
+// UpdateTask 既存のタスクを更新
+// @Summary タスクを更新
+// @Description 指定されたIDのタスクを更新する
+// @Tags tasks
+// @Accept json
+// @Produce json
+// @Param taskId path int true "タスクID"
+// @Param task body model.TaskRequest true "更新するタスク情報"
+// @Success 200 {object} model.TaskResponse
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /tasks/{taskId} [put]
 func (tc *taskController) UpdateTask(c echo.Context) error {
 	userId := getUserIdFromToken(c)
 	
@@ -89,6 +137,17 @@ func (tc *taskController) UpdateTask(c echo.Context) error {
 	return c.JSON(http.StatusOK, taskRes)
 }
 
+// DeleteTask タスクを削除
+// @Summary タスクを削除
+// @Description 指定されたIDのタスクを削除する
+// @Tags tasks
+// @Accept json
+// @Produce json
+// @Param taskId path int true "タスクID"
+// @Success 204 "No Content"
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /tasks/{taskId} [delete]
 func (tc *taskController) DeleteTask(c echo.Context) error {
 	userId := getUserIdFromToken(c)
 	
@@ -104,4 +163,3 @@ func (tc *taskController) DeleteTask(c echo.Context) error {
 	}
 	return c.NoContent(http.StatusNoContent)
 }
-

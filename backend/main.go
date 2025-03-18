@@ -4,8 +4,20 @@ import (
 	"go-react-app/db"
 	"go-react-app/main_entry_module"
 	"log"
+	
+	_ "go-react-app/docs" // Swaggerドキュメントのインポート（重要）
 )
 
+// @title Blog CMS API
+// @version 1.0
+// @description ブログCMSのバックエンドAPI
+// @host localhost:8080
+// @BasePath /api
+// @schemes http
+// @securityDefinitions.apikey Bearer
+// @in header
+// @name Authorization
+// @openapi 3.0.0
 func main() {
 	// データベース接続
 	db := db.NewDB()
