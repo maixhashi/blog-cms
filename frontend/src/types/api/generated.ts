@@ -4,6 +4,78 @@
  */
 
 export interface paths {
+  "/csrf-token": {
+    /** CSRFトークンを取得する */
+    get: {
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions["model.CsrfTokenResponse"];
+        };
+      };
+    };
+  };
+  "/login": {
+    /** 既存ユーザーのログイン処理 */
+    post: {
+      parameters: {
+        body: {
+          /** ログイン情報 */
+          user: definitions["model.UserLoginRequest"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: string;
+        };
+        /** Bad Request */
+        400: {
+          schema: { [key: string]: string };
+        };
+        /** Internal Server Error */
+        500: {
+          schema: { [key: string]: string };
+        };
+      };
+    };
+  };
+  "/logout": {
+    /** ユーザーのログアウト処理 */
+    post: {
+      responses: {
+        /** OK */
+        200: {
+          schema: string;
+        };
+      };
+    };
+  };
+  "/signup": {
+    /** 新しいユーザーアカウントを作成する */
+    post: {
+      parameters: {
+        body: {
+          /** ユーザー登録情報 */
+          user: definitions["model.UserSignupRequest"];
+        };
+      };
+      responses: {
+        /** Created */
+        201: {
+          schema: definitions["model.UserResponse"];
+        };
+        /** Bad Request */
+        400: {
+          schema: { [key: string]: string };
+        };
+        /** Internal Server Error */
+        500: {
+          schema: { [key: string]: string };
+        };
+      };
+    };
+  };
   "/tasks": {
     /** ログインユーザーのすべてのタスクを取得する */
     get: {
@@ -118,6 +190,10 @@ export interface paths {
 }
 
 export interface definitions {
+  "model.CsrfTokenResponse": {
+    /** @example token-string-here */
+    csrf_token?: string;
+  };
   "model.TaskRequest": {
     /** @example 買い物に行く */
     title: string;
@@ -131,6 +207,24 @@ export interface definitions {
     title?: string;
     /** @example 2023-01-01T00:00:00Z */
     updated_at?: string;
+  };
+  "model.UserLoginRequest": {
+    /** @example user@example.com */
+    email: string;
+    /** @example password123 */
+    password: string;
+  };
+  "model.UserResponse": {
+    /** @example user@example.com */
+    email?: string;
+    /** @example 1 */
+    id?: number;
+  };
+  "model.UserSignupRequest": {
+    /** @example user@example.com */
+    email: string;
+    /** @example password123 */
+    password: string;
   };
 }
 

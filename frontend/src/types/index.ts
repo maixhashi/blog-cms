@@ -1,9 +1,8 @@
 // モデル関連の型をすべてエクスポート
 export * from './models';
 
-// API関連の型をエクスポート（必要に応じて）
+// API関連の型をエクスポート
 export * from './api/generated';
-
 
 // 他の型定義...
 export type Feed = {
@@ -16,13 +15,18 @@ export type Feed = {
   created_at?: string
   updated_at?: string
 }
+
 export type CsrfToken = {
   csrf_token: string
 }
+
+// Credentialは非推奨、UserCredentialを使用
 export type Credential = {
   email: string
   password: string
 }
+
+// 以下省略...
 
 export type ExternalAPI = {
   id: number

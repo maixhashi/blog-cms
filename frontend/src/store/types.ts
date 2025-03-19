@@ -1,3 +1,5 @@
+import { UserState } from './types/userTypes';
+
 // 各スライスの型定義
 export type TaskState = {
   editedTask: { id: number; title: string }
@@ -74,4 +76,4 @@ export type ArticleState = {
 }
 
 // 全体のアプリケーション状態の型を更新
-export type State = TaskState & ExternalAPIState & FeedState & ArticleState & LayoutState & LayoutComponentState
+export type State = UserState & TaskState & ExternalAPIState & FeedState & ArticleState & LayoutState & LayoutComponentState

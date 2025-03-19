@@ -1,6 +1,7 @@
 import { useState, FormEvent } from 'react'
 import { ComputerDesktopIcon, ArrowPathIcon } from '@heroicons/react/24/solid'
 import { useMutateAuth } from '../hooks/useMutateAuth'
+import { UserCredential } from '../types/models/user'
 import '../Auth.css'
 
 export const Auth = () => {
@@ -11,12 +12,14 @@ export const Auth = () => {
 
   const submitAuthHandler = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    const credential: UserCredential = { email, password: pw }
+    
     if (isLogin) {
-      loginMutation.mutate({ email, password: pw })
+      loginMutation.mutate(credential)
     } else {
       await registerMutation
-        .mutateAsync({ email, password: pw })
-        .then(() => loginMutation.mutate({ email, password: pw }))
+        .mutateAsync(credential)
+        .then(() => loginMutation.mutate(credential))
     }
   }
 

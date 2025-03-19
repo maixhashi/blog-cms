@@ -25,6 +25,17 @@ func NewUserController(uu usecase.IUserUsecase) IUserController {
 	return &userController{uu}
 }
 
+// SignUp 新規ユーザー登録
+// @Summary 新規ユーザー登録
+// @Description 新しいユーザーアカウントを作成する
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param user body model.UserSignupRequest true "ユーザー登録情報"
+// @Success 201 {object} model.UserResponse
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /signup [post]
 func (uc *userController) SignUp(c echo.Context) error {
 	req := model.UserSignupRequest{}
 	if err := c.Bind(&req); err != nil {
@@ -39,6 +50,17 @@ func (uc *userController) SignUp(c echo.Context) error {
 	return c.JSON(http.StatusCreated, userRes)
 }
 
+// LogIn ユーザーログイン
+// @Summary ユーザーログイン
+// @Description 既存ユーザーのログイン処理
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param user body model.UserLoginRequest true "ログイン情報"
+// @Success 200 {string} string "OK"
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /login [post]
 func (uc *userController) LogIn(c echo.Context) error {
 	req := model.UserLoginRequest{}
 	if err := c.Bind(&req); err != nil {
@@ -64,6 +86,14 @@ func (uc *userController) LogIn(c echo.Context) error {
 	return c.NoContent(http.StatusOK)
 }
 
+// LogOut ユーザーログアウト
+// @Summary ユーザーログアウト
+// @Description ユーザーのログアウト処理
+// @Tags users
+// @Accept json
+// @Produce json
+// @Success 200 {string} string "OK"
+// @Router /logout [post]
 func (uc *userController) LogOut(c echo.Context) error {
 	cookie := new(http.Cookie)
 	cookie.Name = "token"
@@ -79,6 +109,14 @@ func (uc *userController) LogOut(c echo.Context) error {
 	return c.NoContent(http.StatusOK)
 }
 
+// CsrfToken CSRFトークン取得
+// @Summary CSRFトークン取得
+// @Description CSRFトークンを取得する
+// @Tags users
+// @Accept json
+// @Produce json
+// @Success 200 {object} model.CsrfTokenResponse
+// @Router /csrf-token [get]
 func (uc *userController) CsrfToken(c echo.Context) error {
 	token := c.Get("csrf").(string)
 	return c.JSON(http.StatusOK, map[string]string{
