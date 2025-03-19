@@ -1,5 +1,46 @@
 basePath: /api
 definitions:
+  model.ArticleRequest:
+    properties:
+      content:
+        example: Goは静的型付け言語です...
+        type: string
+      published:
+        example: true
+        type: boolean
+      tags:
+        example: Go,プログラミング,チュートリアル
+        type: string
+      title:
+        example: Goプログラミングの基礎
+        type: string
+    required:
+    - title
+    type: object
+  model.ArticleResponse:
+    properties:
+      content:
+        example: Goは静的型付け言語です...
+        type: string
+      created_at:
+        example: "2023-01-01T00:00:00Z"
+        type: string
+      id:
+        example: 1
+        type: integer
+      published:
+        example: true
+        type: boolean
+      tags:
+        example: Go,プログラミング,チュートリアル
+        type: string
+      title:
+        example: Goプログラミングの基礎
+        type: string
+      updated_at:
+        example: "2023-01-01T00:00:00Z"
+        type: string
+    type: object
   model.CsrfTokenResponse:
     properties:
       csrf_token:
@@ -70,6 +111,163 @@ info:
   title: Blog CMS API
   version: "1.0"
 paths:
+  /articles:
+    get:
+      consumes:
+      - application/json
+      description: ログインユーザーのすべての記事を取得する
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.ArticleResponse'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: ユーザーの記事一覧を取得
+      tags:
+      - articles
+    post:
+      consumes:
+      - application/json
+      description: ユーザーの新しい記事を作成する
+      parameters:
+      - description: 記事情報
+        in: body
+        name: article
+        required: true
+        schema:
+          $ref: '#/definitions/model.ArticleRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.ArticleResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: 新しい記事を作成
+      tags:
+      - articles
+  /articles/{articleId}:
+    delete:
+      consumes:
+      - application/json
+      description: 指定されたIDの記事を削除する
+      parameters:
+      - description: 記事ID
+        in: path
+        name: articleId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: 記事を削除
+      tags:
+      - articles
+    get:
+      consumes:
+      - application/json
+      description: 指定されたIDの記事を取得する
+      parameters:
+      - description: 記事ID
+        in: path
+        name: articleId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.ArticleResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: 特定の記事を取得
+      tags:
+      - articles
+    put:
+      consumes:
+      - application/json
+      description: 指定されたIDの記事を更新する
+      parameters:
+      - description: 記事ID
+        in: path
+        name: articleId
+        required: true
+        type: integer
+      - description: 更新する記事情報
+        in: body
+        name: article
+        required: true
+        schema:
+          $ref: '#/definitions/model.ArticleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.ArticleResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: 記事を更新
+      tags:
+      - articles
   /csrf-token:
     get:
       consumes:
