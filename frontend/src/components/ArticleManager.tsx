@@ -43,7 +43,7 @@ export const ArticleManager = () => {
 
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [updateArticle])
+  }, [editedArticle])
 
   const createNewArticle = () => {
     updateArticle({ id: 0, title: '', content: '', published: false, tags: '' })
@@ -51,7 +51,7 @@ export const ArticleManager = () => {
   }
 
   const handleSubmit = () => {
-    if (!editedArticle.title && !editedArticle.content) return
+    if (!editedArticle.title) return
     
     if (editedArticle.id === 0) {
       createArticleMutation.mutate({
@@ -61,7 +61,13 @@ export const ArticleManager = () => {
         tags: editedArticle.tags,
       })
     } else {
-      updateArticleMutation.mutate(editedArticle)
+      updateArticleMutation.mutate({
+        id: editedArticle.id,
+        title: editedArticle.title,
+        content: editedArticle.content,
+        published: editedArticle.published,
+        tags: editedArticle.tags,
+      })
     }
     setIsEditing(false)
   }
@@ -99,18 +105,18 @@ export const ArticleManager = () => {
           data.map((article) => (
             <ArticleItem
               key={article.id}
-              id={article.id}
-              title={article.title}
-              content={article.content}
-              published={article.published}
-              tags={article.tags}
+              id={article.id!}
+              title={article.title!}
+              content={article.content!}
+              published={article.published!}
+              tags={article.tags!}
               onEdit={() => {
                 updateArticle({
-                  id: article.id,
-                  title: article.title,
-                  content: article.content,
-                  published: article.published,
-                  tags: article.tags,
+                  id: article.id!,
+                  title: article.title!,
+                  content: article.content!,
+                  published: article.published!,
+                  tags: article.tags!,
                 })
                 setIsEditing(true)
               }}
@@ -185,7 +191,7 @@ export const ArticleManager = () => {
             <button 
               className="save-button" 
               onClick={handleSubmit}
-              disabled={!editedArticle.title || !editedArticle.content}
+              disabled={!editedArticle.title}
             >
               保存
             </button>

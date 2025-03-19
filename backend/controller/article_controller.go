@@ -25,6 +25,15 @@ func NewArticleController(au usecase.IArticleUsecase) IArticleController {
 	return &articleController{au}
 }
 
+// GetAllArticles ユーザーのすべての記事を取得
+// @Summary ユーザーの記事一覧を取得
+// @Description ログインユーザーのすべての記事を取得する
+// @Tags articles
+// @Accept json
+// @Produce json
+// @Success 200 {array} model.ArticleResponse
+// @Failure 500 {object} map[string]string
+// @Router /articles [get]
 func (ac *articleController) GetAllArticles(c echo.Context) error {
 	userId := getUserIdFromToken(c)
 	
@@ -35,6 +44,17 @@ func (ac *articleController) GetAllArticles(c echo.Context) error {
 	return c.JSON(http.StatusOK, articlesRes)
 }
 
+// GetArticleById 指定されたIDの記事を取得
+// @Summary 特定の記事を取得
+// @Description 指定されたIDの記事を取得する
+// @Tags articles
+// @Accept json
+// @Produce json
+// @Param articleId path int true "記事ID"
+// @Success 200 {object} model.ArticleResponse
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /articles/{articleId} [get]
 func (ac *articleController) GetArticleById(c echo.Context) error {
 	userId := getUserIdFromToken(c)
 	
@@ -51,6 +71,17 @@ func (ac *articleController) GetArticleById(c echo.Context) error {
 	return c.JSON(http.StatusOK, articleRes)
 }
 
+// CreateArticle 新しい記事を作成
+// @Summary 新しい記事を作成
+// @Description ユーザーの新しい記事を作成する
+// @Tags articles
+// @Accept json
+// @Produce json
+// @Param article body model.ArticleRequest true "記事情報"
+// @Success 201 {object} model.ArticleResponse
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /articles [post]
 func (ac *articleController) CreateArticle(c echo.Context) error {
 	userId := getUserIdFromToken(c)
 	
@@ -67,6 +98,18 @@ func (ac *articleController) CreateArticle(c echo.Context) error {
 	return c.JSON(http.StatusCreated, articleRes)
 }
 
+// UpdateArticle 既存の記事を更新
+// @Summary 記事を更新
+// @Description 指定されたIDの記事を更新する
+// @Tags articles
+// @Accept json
+// @Produce json
+// @Param articleId path int true "記事ID"
+// @Param article body model.ArticleRequest true "更新する記事情報"
+// @Success 200 {object} model.ArticleResponse
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /articles/{articleId} [put]
 func (ac *articleController) UpdateArticle(c echo.Context) error {
 	userId := getUserIdFromToken(c)
 	
@@ -89,6 +132,17 @@ func (ac *articleController) UpdateArticle(c echo.Context) error {
 	return c.JSON(http.StatusOK, articleRes)
 }
 
+// DeleteArticle 記事を削除
+// @Summary 記事を削除
+// @Description 指定されたIDの記事を削除する
+// @Tags articles
+// @Accept json
+// @Produce json
+// @Param articleId path int true "記事ID"
+// @Success 204 "No Content"
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /articles/{articleId} [delete]
 func (ac *articleController) DeleteArticle(c echo.Context) error {
 	userId := getUserIdFromToken(c)
 	

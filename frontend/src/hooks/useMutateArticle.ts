@@ -1,8 +1,8 @@
 import axios from 'axios'
 import { useQueryClient, useMutation } from '@tanstack/react-query'
-import { Article } from '../types'
+import { Article, ArticleRequest } from '../types/models/article'
 import useStore from '../store'
-import { useError } from '../hooks/useError'
+import { useError } from './useError'
 
 export const useMutateArticle = () => {
   const queryClient = useQueryClient()
@@ -10,7 +10,7 @@ export const useMutateArticle = () => {
   const resetEditedArticle = useStore((state) => state.resetEditedArticle)
 
   const createArticleMutation = useMutation(
-    (article: Omit<Article, 'id' | 'created_at' | 'updated_at'>) =>
+    (article: ArticleRequest) =>
       axios.post<Article>(`${process.env.REACT_APP_API_URL}/articles`, article),
     {
       onSuccess: (res) => {
@@ -31,7 +31,7 @@ export const useMutateArticle = () => {
   )
   
   const updateArticleMutation = useMutation(
-    (article: Omit<Article, 'created_at' | 'updated_at'>) =>
+    (article: ArticleRequest & { id: number }) =>
       axios.put<Article>(`${process.env.REACT_APP_API_URL}/articles/${article.id}`, {
         title: article.title,
         content: article.content,

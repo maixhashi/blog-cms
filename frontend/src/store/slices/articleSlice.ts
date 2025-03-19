@@ -1,24 +1,16 @@
 import { StateCreator } from 'zustand';
 import { ArticleState } from '../types/articleTypes';
+import { EditedArticle, initialEditedArticle } from '../../types/models/article';
 
+/**
+ * 記事関連のZustandストアスライス
+ */
 export const createArticleSlice: StateCreator<ArticleState> = (set) => ({
-  editedArticle: {
-    id: 0,
-    title: '',
-    content: '',
-    published: false,
-    tags: ''
-  },
-  updateEditedArticle: (payload) => set({
+  editedArticle: initialEditedArticle,
+  updateEditedArticle: (payload: EditedArticle) => set({
     editedArticle: payload
   }),
-  resetEditedArticle: () => set({
-    editedArticle: {
-      id: 0,
-      title: '',
-      content: '',
-      published: false,
-      tags: ''
-    }
+  resetEditedArticle: () => set({ 
+    editedArticle: initialEditedArticle 
   }),
 });

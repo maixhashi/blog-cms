@@ -15,26 +15,25 @@ type Article struct {
 	UserId    uint      `json:"user_id" gorm:"not null"`
 }
 
-// リクエスト用の構造体
+// ArticleRequest 記事作成・更新リクエスト
 type ArticleRequest struct {
-	Title     string `json:"title" validate:"required"`
-	Content   string `json:"content"`
-	Published bool   `json:"published"`
-	Tags      string `json:"tags"`
+	Title     string `json:"title" validate:"required" example:"Goプログラミングの基礎"`
+	Content   string `json:"content" example:"Goは静的型付け言語です..."`
+	Published bool   `json:"published" example:"true"`
+	Tags      string `json:"tags" example:"Go,プログラミング,チュートリアル"`
 	UserId    uint   `json:"-"` // クライアントからは送信されず、JWTから取得
 }
 
-// レスポンス用の構造体
+// ArticleResponse 記事のレスポンス
 type ArticleResponse struct {
-	ID        uint      `json:"id"`
-	Title     string    `json:"title"`
-	Content   string    `json:"content"`
-	Published bool      `json:"published"`
-	Tags      string    `json:"tags"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	ID        uint      `json:"id" example:"1"`
+	Title     string    `json:"title" example:"Goプログラミングの基礎"`
+	Content   string    `json:"content" example:"Goは静的型付け言語です..."`
+	Published bool      `json:"published" example:"true"`
+	Tags      string    `json:"tags" example:"Go,プログラミング,チュートリアル"`
+	CreatedAt time.Time `json:"created_at" example:"2023-01-01T00:00:00Z"`
+	UpdatedAt time.Time `json:"updated_at" example:"2023-01-01T00:00:00Z"`
 }
-
 // ArticleからArticleResponseへの変換メソッド
 func (a *Article) ToResponse() ArticleResponse {
 	return ArticleResponse{

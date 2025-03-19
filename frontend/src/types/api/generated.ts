@@ -4,6 +4,117 @@
  */
 
 export interface paths {
+  "/articles": {
+    /** ログインユーザーのすべての記事を取得する */
+    get: {
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions["model.ArticleResponse"][];
+        };
+        /** Internal Server Error */
+        500: {
+          schema: { [key: string]: string };
+        };
+      };
+    };
+    /** ユーザーの新しい記事を作成する */
+    post: {
+      parameters: {
+        body: {
+          /** 記事情報 */
+          article: definitions["model.ArticleRequest"];
+        };
+      };
+      responses: {
+        /** Created */
+        201: {
+          schema: definitions["model.ArticleResponse"];
+        };
+        /** Bad Request */
+        400: {
+          schema: { [key: string]: string };
+        };
+        /** Internal Server Error */
+        500: {
+          schema: { [key: string]: string };
+        };
+      };
+    };
+  };
+  "/articles/{articleId}": {
+    /** 指定されたIDの記事を取得する */
+    get: {
+      parameters: {
+        path: {
+          /** 記事ID */
+          articleId: number;
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions["model.ArticleResponse"];
+        };
+        /** Bad Request */
+        400: {
+          schema: { [key: string]: string };
+        };
+        /** Internal Server Error */
+        500: {
+          schema: { [key: string]: string };
+        };
+      };
+    };
+    /** 指定されたIDの記事を更新する */
+    put: {
+      parameters: {
+        path: {
+          /** 記事ID */
+          articleId: number;
+        };
+        body: {
+          /** 更新する記事情報 */
+          article: definitions["model.ArticleRequest"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions["model.ArticleResponse"];
+        };
+        /** Bad Request */
+        400: {
+          schema: { [key: string]: string };
+        };
+        /** Internal Server Error */
+        500: {
+          schema: { [key: string]: string };
+        };
+      };
+    };
+    /** 指定されたIDの記事を削除する */
+    delete: {
+      parameters: {
+        path: {
+          /** 記事ID */
+          articleId: number;
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+        /** Bad Request */
+        400: {
+          schema: { [key: string]: string };
+        };
+        /** Internal Server Error */
+        500: {
+          schema: { [key: string]: string };
+        };
+      };
+    };
+  };
   "/csrf-token": {
     /** CSRFトークンを取得する */
     get: {
@@ -190,6 +301,32 @@ export interface paths {
 }
 
 export interface definitions {
+  "model.ArticleRequest": {
+    /** @example Goは静的型付け言語です... */
+    content?: string;
+    /** @example true */
+    published?: boolean;
+    /** @example Go,プログラミング,チュートリアル */
+    tags?: string;
+    /** @example Goプログラミングの基礎 */
+    title: string;
+  };
+  "model.ArticleResponse": {
+    /** @example Goは静的型付け言語です... */
+    content?: string;
+    /** @example 2023-01-01T00:00:00Z */
+    created_at?: string;
+    /** @example 1 */
+    id?: number;
+    /** @example true */
+    published?: boolean;
+    /** @example Go,プログラミング,チュートリアル */
+    tags?: string;
+    /** @example Goプログラミングの基礎 */
+    title?: string;
+    /** @example 2023-01-01T00:00:00Z */
+    updated_at?: string;
+  };
   "model.CsrfTokenResponse": {
     /** @example token-string-here */
     csrf_token?: string;
