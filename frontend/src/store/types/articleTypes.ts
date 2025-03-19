@@ -1,17 +1,7 @@
-export type ArticleState = {
-  editedArticle: {
-    id: number;
-    title: string;
-    content: string;
-    published: boolean;
-    tags: string;
-  };
-  updateEditedArticle: (payload: {
-    id: number;
-    title: string;
-    content: string;
-    published: boolean;
-    tags: string;
-  }) => void;
+import { EditedArticle } from '../../types/models/article';
+
+export interface ArticleState {
+  editedArticle: EditedArticle;
+  updateEditedArticle: (payload: EditedArticle) => void;
   resetEditedArticle: () => void;
-};
+}

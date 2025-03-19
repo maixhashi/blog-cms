@@ -2,18 +2,15 @@ import { FC, memo } from 'react'
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/solid'
 import { useMutateArticle } from '../hooks/useMutateArticle'
 import useStore from '../store'
+import { Article } from '../types/models/article'
 import '../ArticleItem.css'
 
-interface Props {
-  id: number
-  title: string
-  content: string
-  published: boolean
-  tags: string
+// Articleから必要なプロパティのみを取り出す
+type ArticleItemProps = Required<Pick<Article, 'id' | 'title' | 'content' | 'published' | 'tags'>> & {
   onEdit: () => void
 }
 
-const ArticleItemMemo: FC<Props> = ({
+const ArticleItemMemo: FC<ArticleItemProps> = ({
   id,
   title,
   content,

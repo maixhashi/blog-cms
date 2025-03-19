@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { useQuery } from '@tanstack/react-query'
-import { Article } from '../types/index'
-import { useError } from '../hooks/useError'
+import { Article } from '../types/models/article'
+import { useError } from './useError'
 
 export const useQueryArticles = () => {
   const { switchErrorHandling } = useError()
