@@ -6,6 +6,7 @@ import { createFeedSlice } from './slices/feedSlice'
 import { createArticleSlice } from './slices/articleSlice'
 import { createLayoutSlice } from './slices/layoutSlice'
 import { createLayoutComponentSlice } from './slices/layoutComponentSlice'
+import { createUserSlice } from './slices/userSlice'
 
 const useStore = create<State>((...args) => ({
   ...createTaskSlice(...args),
@@ -14,6 +15,7 @@ const useStore = create<State>((...args) => ({
   ...createArticleSlice(...args),
   ...createLayoutSlice(...args),
   ...createLayoutComponentSlice(...args),
+  ...createUserSlice(...args),
 }))
 
 export default useStore
