@@ -1,4 +1,4 @@
-import { definitions } from './api';
+import { definitions } from './api/generated';
 
 // APIの型定義から派生した型
 
