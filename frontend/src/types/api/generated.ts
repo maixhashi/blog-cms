@@ -126,6 +126,196 @@ export interface paths {
       };
     };
   };
+  "/layout-components": {
+    /** ログインユーザーのすべてのレイアウトコンポーネントを取得する */
+    get: {
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions["model.LayoutComponentResponse"][];
+        };
+        /** Internal Server Error */
+        500: {
+          schema: { [key: string]: string };
+        };
+      };
+    };
+    /** ユーザーの新しいレイアウトコンポーネントを作成する */
+    post: {
+      parameters: {
+        body: {
+          /** コンポーネント情報 */
+          component: definitions["model.LayoutComponentRequest"];
+        };
+      };
+      responses: {
+        /** Created */
+        201: {
+          schema: definitions["model.LayoutComponentResponse"];
+        };
+        /** Bad Request */
+        400: {
+          schema: { [key: string]: string };
+        };
+        /** Internal Server Error */
+        500: {
+          schema: { [key: string]: string };
+        };
+      };
+    };
+  };
+  "/layout-components/{componentId}": {
+    /** 指定されたIDのレイアウトコンポーネントを取得する */
+    get: {
+      parameters: {
+        path: {
+          /** コンポーネントID */
+          componentId: number;
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions["model.LayoutComponentResponse"];
+        };
+        /** Bad Request */
+        400: {
+          schema: { [key: string]: string };
+        };
+        /** Internal Server Error */
+        500: {
+          schema: { [key: string]: string };
+        };
+      };
+    };
+    /** 指定されたIDのレイアウトコンポーネントを更新する */
+    put: {
+      parameters: {
+        path: {
+          /** コンポーネントID */
+          componentId: number;
+        };
+        body: {
+          /** 更新するコンポーネント情報 */
+          component: definitions["model.LayoutComponentRequest"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions["model.LayoutComponentResponse"];
+        };
+        /** Bad Request */
+        400: {
+          schema: { [key: string]: string };
+        };
+        /** Internal Server Error */
+        500: {
+          schema: { [key: string]: string };
+        };
+      };
+    };
+    /** 指定されたIDのレイアウトコンポーネントを削除する */
+    delete: {
+      parameters: {
+        path: {
+          /** コンポーネントID */
+          componentId: number;
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+        /** Bad Request */
+        400: {
+          schema: { [key: string]: string };
+        };
+        /** Internal Server Error */
+        500: {
+          schema: { [key: string]: string };
+        };
+      };
+    };
+  };
+  "/layout-components/{componentId}/assign": {
+    /** 指定されたコンポーネントをレイアウトから削除する */
+    delete: {
+      parameters: {
+        path: {
+          /** コンポーネントID */
+          componentId: number;
+        };
+      };
+      responses: {
+        /** OK */
+        200: unknown;
+        /** Bad Request */
+        400: {
+          schema: { [key: string]: string };
+        };
+        /** Internal Server Error */
+        500: {
+          schema: { [key: string]: string };
+        };
+      };
+    };
+  };
+  "/layout-components/{componentId}/assign/{layoutId}": {
+    /** 指定されたコンポーネントを特定のレイアウトに割り当てる */
+    post: {
+      parameters: {
+        path: {
+          /** コンポーネントID */
+          componentId: number;
+          /** レイアウトID */
+          layoutId: number;
+        };
+        body: {
+          /** 割り当て情報 */
+          position: definitions["model.AssignLayoutRequest"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: unknown;
+        /** Bad Request */
+        400: {
+          schema: { [key: string]: string };
+        };
+        /** Internal Server Error */
+        500: {
+          schema: { [key: string]: string };
+        };
+      };
+    };
+  };
+  "/layout-components/{componentId}/position": {
+    /** 指定されたコンポーネントの位置情報を更新する */
+    put: {
+      parameters: {
+        path: {
+          /** コンポーネントID */
+          componentId: number;
+        };
+        body: {
+          /** 位置情報 */
+          position: definitions["model.PositionRequest"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: unknown;
+        /** Bad Request */
+        400: {
+          schema: { [key: string]: string };
+        };
+        /** Internal Server Error */
+        500: {
+          schema: { [key: string]: string };
+        };
+      };
+    };
+  };
   "/layouts": {
     /** ログインユーザーのすべてのレイアウトを取得する */
     get: {
@@ -438,21 +628,53 @@ export interface definitions {
     /** @example 2023-01-01T00:00:00Z */
     updated_at?: string;
   };
+  "model.AssignLayoutRequest": {
+    /** @example 1 */
+    layout_id: number;
+    position?: definitions["model.PositionRequest"];
+  };
   "model.CsrfTokenResponse": {
     /** @example token-string-here */
     csrf_token?: string;
   };
-  "model.LayoutComponentResponse": {
+  "model.LayoutComponentRequest": {
+    /** @example <h1>ブログタイトル</h1> */
     content?: string;
-    created_at?: string;
+    /** @example 50 */
     height?: number;
-    id?: number;
-    layout_id?: number;
-    name?: string;
-    type?: string;
-    updated_at?: string;
+    /** @example ヘッダーコンポーネント */
+    name: string;
+    /** @example header */
+    type: string;
+    /** @example 100 */
     width?: number;
+    /** @example 0 */
     x?: number;
+    /** @example 0 */
+    y?: number;
+  };
+  "model.LayoutComponentResponse": {
+    /** @example <h1>ブログタイトル</h1> */
+    content?: string;
+    /** @example 2023-01-01T00:00:00Z */
+    created_at?: string;
+    /** @example 50 */
+    height?: number;
+    /** @example 1 */
+    id?: number;
+    /** @example 1 */
+    layout_id?: number;
+    /** @example ヘッダーコンポーネント */
+    name?: string;
+    /** @example header */
+    type?: string;
+    /** @example 2023-01-01T00:00:00Z */
+    updated_at?: string;
+    /** @example 100 */
+    width?: number;
+    /** @example 0 */
+    x?: number;
+    /** @example 0 */
     y?: number;
   };
   "model.LayoutRequest": {
@@ -469,6 +691,16 @@ export interface definitions {
     title?: string;
     /** @example 2023-01-01T00:00:00Z */
     updated_at?: string;
+  };
+  "model.PositionRequest": {
+    /** @example 75 */
+    height?: number;
+    /** @example 150 */
+    width?: number;
+    /** @example 10 */
+    x?: number;
+    /** @example 20 */
+    y?: number;
   };
   "model.TaskRequest": {
     /** @example 買い物に行く */

@@ -41,35 +41,83 @@ definitions:
         example: "2023-01-01T00:00:00Z"
         type: string
     type: object
+  model.AssignLayoutRequest:
+    properties:
+      layout_id:
+        example: 1
+        type: integer
+      position:
+        $ref: '#/definitions/model.PositionRequest'
+    required:
+    - layout_id
+    type: object
   model.CsrfTokenResponse:
     properties:
       csrf_token:
         example: token-string-here
         type: string
     type: object
+  model.LayoutComponentRequest:
+    properties:
+      content:
+        example: <h1>ブログタイトル</h1>
+        type: string
+      height:
+        example: 50
+        type: integer
+      name:
+        example: ヘッダーコンポーネント
+        type: string
+      type:
+        example: header
+        type: string
+      width:
+        example: 100
+        type: integer
+      x:
+        example: 0
+        type: integer
+      "y":
+        example: 0
+        type: integer
+    required:
+    - name
+    - type
+    type: object
   model.LayoutComponentResponse:
     properties:
       content:
+        example: <h1>ブログタイトル</h1>
         type: string
       created_at:
+        example: "2023-01-01T00:00:00Z"
         type: string
       height:
+        example: 50
         type: integer
       id:
+        example: 1
         type: integer
       layout_id:
+        example: 1
         type: integer
       name:
+        example: ヘッダーコンポーネント
         type: string
       type:
+        example: header
         type: string
       updated_at:
+        example: "2023-01-01T00:00:00Z"
         type: string
       width:
+        example: 100
         type: integer
       x:
+        example: 0
         type: integer
       "y":
+        example: 0
         type: integer
     type: object
   model.LayoutRequest:
@@ -98,6 +146,21 @@ definitions:
       updated_at:
         example: "2023-01-01T00:00:00Z"
         type: string
+    type: object
+  model.PositionRequest:
+    properties:
+      height:
+        example: 75
+        type: integer
+      width:
+        example: 150
+        type: integer
+      x:
+        example: 10
+        type: integer
+      "y":
+        example: 20
+        type: integer
     type: object
   model.TaskRequest:
     properties:
@@ -335,6 +398,273 @@ paths:
       summary: CSRFトークン取得
       tags:
       - users
+  /layout-components:
+    get:
+      consumes:
+      - application/json
+      description: ログインユーザーのすべてのレイアウトコンポーネントを取得する
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.LayoutComponentResponse'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: ユーザーのレイアウトコンポーネント一覧を取得
+      tags:
+      - layout-components
+    post:
+      consumes:
+      - application/json
+      description: ユーザーの新しいレイアウトコンポーネントを作成する
+      parameters:
+      - description: コンポーネント情報
+        in: body
+        name: component
+        required: true
+        schema:
+          $ref: '#/definitions/model.LayoutComponentRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.LayoutComponentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: 新しいレイアウトコンポーネントを作成
+      tags:
+      - layout-components
+  /layout-components/{componentId}:
+    delete:
+      consumes:
+      - application/json
+      description: 指定されたIDのレイアウトコンポーネントを削除する
+      parameters:
+      - description: コンポーネントID
+        in: path
+        name: componentId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: レイアウトコンポーネントを削除
+      tags:
+      - layout-components
+    get:
+      consumes:
+      - application/json
+      description: 指定されたIDのレイアウトコンポーネントを取得する
+      parameters:
+      - description: コンポーネントID
+        in: path
+        name: componentId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.LayoutComponentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: 特定のレイアウトコンポーネントを取得
+      tags:
+      - layout-components
+    put:
+      consumes:
+      - application/json
+      description: 指定されたIDのレイアウトコンポーネントを更新する
+      parameters:
+      - description: コンポーネントID
+        in: path
+        name: componentId
+        required: true
+        type: integer
+      - description: 更新するコンポーネント情報
+        in: body
+        name: component
+        required: true
+        schema:
+          $ref: '#/definitions/model.LayoutComponentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.LayoutComponentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: レイアウトコンポーネントを更新
+      tags:
+      - layout-components
+  /layout-components/{componentId}/assign:
+    delete:
+      consumes:
+      - application/json
+      description: 指定されたコンポーネントをレイアウトから削除する
+      parameters:
+      - description: コンポーネントID
+        in: path
+        name: componentId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: コンポーネントをレイアウトから削除
+      tags:
+      - layout-components
+  /layout-components/{componentId}/assign/{layoutId}:
+    post:
+      consumes:
+      - application/json
+      description: 指定されたコンポーネントを特定のレイアウトに割り当てる
+      parameters:
+      - description: コンポーネントID
+        in: path
+        name: componentId
+        required: true
+        type: integer
+      - description: レイアウトID
+        in: path
+        name: layoutId
+        required: true
+        type: integer
+      - description: 割り当て情報
+        in: body
+        name: position
+        required: true
+        schema:
+          $ref: '#/definitions/model.AssignLayoutRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: コンポーネントをレイアウトに割り当て
+      tags:
+      - layout-components
+  /layout-components/{componentId}/position:
+    put:
+      consumes:
+      - application/json
+      description: 指定されたコンポーネントの位置情報を更新する
+      parameters:
+      - description: コンポーネントID
+        in: path
+        name: componentId
+        required: true
+        type: integer
+      - description: 位置情報
+        in: body
+        name: position
+        required: true
+        schema:
+          $ref: '#/definitions/model.PositionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: コンポーネントの位置を更新
+      tags:
+      - layout-components
   /layouts:
     get:
       consumes:

@@ -5,6 +5,7 @@ export * from './models';
 export * from './api/generated';
 
 // 他の型定義...
+// (既存のコードはそのまま)
 export type Feed = {
   id: number
   title: string

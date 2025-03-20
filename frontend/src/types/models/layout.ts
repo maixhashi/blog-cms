@@ -1,42 +1,35 @@
-// Layoutモデルの型定義
-export type Layout = {
+import { definitions } from '../api/generated';
+
+// APIから返されるレスポンスの型
+export type LayoutComponent = definitions['model.LayoutComponentResponse'];
+export type Layout = definitions['model.LayoutResponse'];
+
+// 編集中のレイアウトコンポーネント状態
+export interface EditedLayoutComponent {
+  id: number;
+  name: string;
+  type: string;
+  content: string;
+}
+
+// 編集中のレイアウト状態
+export interface EditedLayout {
   id: number;
   title: string;
-  created_at?: string;
-  updated_at?: string;
-};
-
-// 編集中のLayoutの状態を表す型
-export type EditedLayout = {
-  id: number;
-  title: string;
-};
-
-// 初期状態
-export const initialEditedLayout: EditedLayout = {
-  id: 0,
-  title: ''
-};
-
-// LayoutComponentの型定義
-export type LayoutComponent = {
-  id: number;
-  title: string;
-  layout_id: number;
-  type?: string;
-  content?: string;
-};
-
-// 編集中のLayoutComponentの状態
-export type EditedLayoutComponent = {
-  id: number;
-  title: string;
-  layout_id: number;
-};
+  // 必要に応じて他のプロパティを追加
+}
 
 // 初期状態
 export const initialEditedLayoutComponent: EditedLayoutComponent = {
   id: 0,
-  title: '',
-  layout_id: 0
+  name: '',
+  type: '',
+  content: ''
+};
+
+// レイアウトの初期状態
+export const initialEditedLayout: EditedLayout = {
+  id: 0,
+  title: ''
+  // 必要に応じて他のプロパティの初期値を設定
 };
