@@ -47,6 +47,58 @@ definitions:
         example: token-string-here
         type: string
     type: object
+  model.LayoutComponentResponse:
+    properties:
+      content:
+        type: string
+      created_at:
+        type: string
+      height:
+        type: integer
+      id:
+        type: integer
+      layout_id:
+        type: integer
+      name:
+        type: string
+      type:
+        type: string
+      updated_at:
+        type: string
+      width:
+        type: integer
+      x:
+        type: integer
+      "y":
+        type: integer
+    type: object
+  model.LayoutRequest:
+    properties:
+      title:
+        example: ブログのメインレイアウト
+        type: string
+    required:
+    - title
+    type: object
+  model.LayoutResponse:
+    properties:
+      components:
+        items:
+          $ref: '#/definitions/model.LayoutComponentResponse'
+        type: array
+      created_at:
+        example: "2023-01-01T00:00:00Z"
+        type: string
+      id:
+        example: 1
+        type: integer
+      title:
+        example: ブログのメインレイアウト
+        type: string
+      updated_at:
+        example: "2023-01-01T00:00:00Z"
+        type: string
+    type: object
   model.TaskRequest:
     properties:
       title:
@@ -283,6 +335,163 @@ paths:
       summary: CSRFトークン取得
       tags:
       - users
+  /layouts:
+    get:
+      consumes:
+      - application/json
+      description: ログインユーザーのすべてのレイアウトを取得する
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.LayoutResponse'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: ユーザーのレイアウト一覧を取得
+      tags:
+      - layouts
+    post:
+      consumes:
+      - application/json
+      description: ユーザーの新しいレイアウトを作成する
+      parameters:
+      - description: レイアウト情報
+        in: body
+        name: layout
+        required: true
+        schema:
+          $ref: '#/definitions/model.LayoutRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.LayoutResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: 新しいレイアウトを作成
+      tags:
+      - layouts
+  /layouts/{layoutId}:
+    delete:
+      consumes:
+      - application/json
+      description: 指定されたIDのレイアウトを削除する
+      parameters:
+      - description: レイアウトID
+        in: path
+        name: layoutId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: レイアウトを削除
+      tags:
+      - layouts
+    get:
+      consumes:
+      - application/json
+      description: 指定されたIDのレイアウトを取得する
+      parameters:
+      - description: レイアウトID
+        in: path
+        name: layoutId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.LayoutResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: 特定のレイアウトを取得
+      tags:
+      - layouts
+    put:
+      consumes:
+      - application/json
+      description: 指定されたIDのレイアウトを更新する
+      parameters:
+      - description: レイアウトID
+        in: path
+        name: layoutId
+        required: true
+        type: integer
+      - description: 更新するレイアウト情報
+        in: body
+        name: layout
+        required: true
+        schema:
+          $ref: '#/definitions/model.LayoutRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.LayoutResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: レイアウトを更新
+      tags:
+      - layouts
   /login:
     post:
       consumes:

@@ -10,8 +10,8 @@ export * from './task';
 // 記事関連の型
 export * from './article';
 
-// // フィード関連の型
+// フィード関連の型
 // export * from './feed';
 
-// // レイアウト関連の型
-// export * from './layout';
+// レイアウト関連の型
+export * from './layout';

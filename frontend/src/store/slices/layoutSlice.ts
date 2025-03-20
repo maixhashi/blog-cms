@@ -1,32 +1,26 @@
 import { StateCreator } from 'zustand';
 import { LayoutState, LayoutComponentState } from '../types/layoutTypes';
+import { EditedLayout, EditedLayoutComponent, initialEditedLayout, initialEditedLayoutComponent } from '../../types/models/layout';
 
+/**
+ * レイアウト関連のZustandストアスライス
+ */
 export const createLayoutSlice: StateCreator<LayoutState> = (set) => ({
-  editedLayout: {
-    id: 0,
-    title: ''
-  },
-  updateEditedLayout: (payload) => set({
+  editedLayout: initialEditedLayout,
+  updateEditedLayout: (payload: EditedLayout) => set({
     editedLayout: payload
   }),
-  resetEditedLayout: () => set({ editedLayout: {
-    id: 0,
-    title: '' 
-  } }),
+  resetEditedLayout: () => set({ 
+    editedLayout: initialEditedLayout 
+  }),
 });
 
 export const createLayoutComponentSlice: StateCreator<LayoutComponentState> = (set) => ({
-  editedLayoutComponent: {
-    id: 0,
-    title: '',
-    layout_id: 0
-  },
-  updateEditedLayoutComponent: (payload) => set({
+  editedLayoutComponent: initialEditedLayoutComponent,
+  updateEditedLayoutComponent: (payload: EditedLayoutComponent) => set({
     editedLayoutComponent: payload
   }),
-  resetEditedLayoutComponent: () => set({ editedLayoutComponent: {
-    id: 0,
-    title: '',
-    layout_id: 0
-  } }),
+  resetEditedLayoutComponent: () => set({ 
+    editedLayoutComponent: initialEditedLayoutComponent 
+  }),
 });

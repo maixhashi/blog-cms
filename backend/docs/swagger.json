@@ -272,6 +272,243 @@
                 }
             }
         },
+        "/layouts": {
+            "get": {
+                "description": "ログインユーザーのすべてのレイアウトを取得する",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "layouts"
+                ],
+                "summary": "ユーザーのレイアウト一覧を取得",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.LayoutResponse"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "ユーザーの新しいレイアウトを作成する",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "layouts"
+                ],
+                "summary": "新しいレイアウトを作成",
+                "parameters": [
+                    {
+                        "description": "レイアウト情報",
+                        "name": "layout",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.LayoutRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/model.LayoutResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/layouts/{layoutId}": {
+            "get": {
+                "description": "指定されたIDのレイアウトを取得する",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "layouts"
+                ],
+                "summary": "特定のレイアウトを取得",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "レイアウトID",
+                        "name": "layoutId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.LayoutResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "指定されたIDのレイアウトを更新する",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "layouts"
+                ],
+                "summary": "レイアウトを更新",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "レイアウトID",
+                        "name": "layoutId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "更新するレイアウト情報",
+                        "name": "layout",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.LayoutRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.LayoutResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "指定されたIDのレイアウトを削除する",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "layouts"
+                ],
+                "summary": "レイアウトを削除",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "レイアウトID",
+                        "name": "layoutId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/login": {
             "post": {
                 "description": "既存ユーザーのログイン処理",
@@ -701,6 +938,83 @@
                 "csrf_token": {
                     "type": "string",
                     "example": "token-string-here"
+                }
+            }
+        },
+        "model.LayoutComponentResponse": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "height": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "layout_id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "width": {
+                    "type": "integer"
+                },
+                "x": {
+                    "type": "integer"
+                },
+                "y": {
+                    "type": "integer"
+                }
+            }
+        },
+        "model.LayoutRequest": {
+            "type": "object",
+            "required": [
+                "title"
+            ],
+            "properties": {
+                "title": {
+                    "type": "string",
+                    "example": "ブログのメインレイアウト"
+                }
+            }
+        },
+        "model.LayoutResponse": {
+            "type": "object",
+            "properties": {
+                "components": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.LayoutComponentResponse"
+                    }
+                },
+                "created_at": {
+                    "type": "string",
+                    "example": "2023-01-01T00:00:00Z"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "title": {
+                    "type": "string",
+                    "example": "ブログのメインレイアウト"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2023-01-01T00:00:00Z"
                 }
             }
         },
