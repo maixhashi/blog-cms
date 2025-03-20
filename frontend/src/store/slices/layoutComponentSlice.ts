@@ -1,19 +1,13 @@
 import { StateCreator } from 'zustand'
-import { State, LayoutComponentState } from '../types'
+import { EditedLayoutComponent, initialEditedLayoutComponent } from '../../types/models/layout'
+import { LayoutComponentState } from '../types/layoutComponentTypes'
 
-export const createLayoutComponentSlice: StateCreator<
-  State,
-  [],
-  [],
-  LayoutComponentState
-> = (set) => ({
-  editedLayoutComponent: { id: 0, name: '', type: '', content: '' },
-  updateEditedLayoutComponent: (payload) =>
-    set({
-      editedLayoutComponent: payload,
-    }),
-  resetEditedLayoutComponent: () =>
-    set({
-      editedLayoutComponent: { id: 0, name: '', type: '', content: '' },
-    }),
+export const createLayoutComponentSlice: StateCreator<LayoutComponentState> = (set) => ({
+  editedLayoutComponent: initialEditedLayoutComponent,
+  updateEditedLayoutComponent: (payload: EditedLayoutComponent) => set({
+    editedLayoutComponent: payload
+  }),
+  resetEditedLayoutComponent: () => set({ 
+    editedLayoutComponent: initialEditedLayoutComponent 
+  }),
 })
