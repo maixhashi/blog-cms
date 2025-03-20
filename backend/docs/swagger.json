@@ -272,6 +272,409 @@
                 }
             }
         },
+        "/layout-components": {
+            "get": {
+                "description": "ログインユーザーのすべてのレイアウトコンポーネントを取得する",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "layout-components"
+                ],
+                "summary": "ユーザーのレイアウトコンポーネント一覧を取得",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.LayoutComponentResponse"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "ユーザーの新しいレイアウトコンポーネントを作成する",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "layout-components"
+                ],
+                "summary": "新しいレイアウトコンポーネントを作成",
+                "parameters": [
+                    {
+                        "description": "コンポーネント情報",
+                        "name": "component",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.LayoutComponentRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/model.LayoutComponentResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/layout-components/{componentId}": {
+            "get": {
+                "description": "指定されたIDのレイアウトコンポーネントを取得する",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "layout-components"
+                ],
+                "summary": "特定のレイアウトコンポーネントを取得",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "コンポーネントID",
+                        "name": "componentId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.LayoutComponentResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "指定されたIDのレイアウトコンポーネントを更新する",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "layout-components"
+                ],
+                "summary": "レイアウトコンポーネントを更新",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "コンポーネントID",
+                        "name": "componentId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "更新するコンポーネント情報",
+                        "name": "component",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.LayoutComponentRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.LayoutComponentResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "指定されたIDのレイアウトコンポーネントを削除する",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "layout-components"
+                ],
+                "summary": "レイアウトコンポーネントを削除",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "コンポーネントID",
+                        "name": "componentId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/layout-components/{componentId}/assign": {
+            "delete": {
+                "description": "指定されたコンポーネントをレイアウトから削除する",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "layout-components"
+                ],
+                "summary": "コンポーネントをレイアウトから削除",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "コンポーネントID",
+                        "name": "componentId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/layout-components/{componentId}/assign/{layoutId}": {
+            "post": {
+                "description": "指定されたコンポーネントを特定のレイアウトに割り当てる",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "layout-components"
+                ],
+                "summary": "コンポーネントをレイアウトに割り当て",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "コンポーネントID",
+                        "name": "componentId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "レイアウトID",
+                        "name": "layoutId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "割り当て情報",
+                        "name": "position",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.AssignLayoutRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/layout-components/{componentId}/position": {
+            "put": {
+                "description": "指定されたコンポーネントの位置情報を更新する",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "layout-components"
+                ],
+                "summary": "コンポーネントの位置を更新",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "コンポーネントID",
+                        "name": "componentId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "位置情報",
+                        "name": "position",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.PositionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/layouts": {
             "get": {
                 "description": "ログインユーザーのすべてのレイアウトを取得する",
@@ -932,6 +1335,21 @@
                 }
             }
         },
+        "model.AssignLayoutRequest": {
+            "type": "object",
+            "required": [
+                "layout_id"
+            ],
+            "properties": {
+                "layout_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "position": {
+                    "$ref": "#/definitions/model.PositionRequest"
+                }
+            }
+        },
         "model.CsrfTokenResponse": {
             "type": "object",
             "properties": {
@@ -941,41 +1359,89 @@
                 }
             }
         },
+        "model.LayoutComponentRequest": {
+            "type": "object",
+            "required": [
+                "name",
+                "type"
+            ],
+            "properties": {
+                "content": {
+                    "type": "string",
+                    "example": "\u003ch1\u003eブログタイトル\u003c/h1\u003e"
+                },
+                "height": {
+                    "type": "integer",
+                    "example": 50
+                },
+                "name": {
+                    "type": "string",
+                    "example": "ヘッダーコンポーネント"
+                },
+                "type": {
+                    "type": "string",
+                    "example": "header"
+                },
+                "width": {
+                    "type": "integer",
+                    "example": 100
+                },
+                "x": {
+                    "type": "integer",
+                    "example": 0
+                },
+                "y": {
+                    "type": "integer",
+                    "example": 0
+                }
+            }
+        },
         "model.LayoutComponentResponse": {
             "type": "object",
             "properties": {
                 "content": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "\u003ch1\u003eブログタイトル\u003c/h1\u003e"
                 },
                 "created_at": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "2023-01-01T00:00:00Z"
                 },
                 "height": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 50
                 },
                 "id": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 1
                 },
                 "layout_id": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 1
                 },
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "ヘッダーコンポーネント"
                 },
                 "type": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "header"
                 },
                 "updated_at": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "2023-01-01T00:00:00Z"
                 },
                 "width": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 100
                 },
                 "x": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 0
                 },
                 "y": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 0
                 }
             }
         },
@@ -1015,6 +1481,27 @@
                 "updated_at": {
                     "type": "string",
                     "example": "2023-01-01T00:00:00Z"
+                }
+            }
+        },
+        "model.PositionRequest": {
+            "type": "object",
+            "properties": {
+                "height": {
+                    "type": "integer",
+                    "example": 75
+                },
+                "width": {
+                    "type": "integer",
+                    "example": 150
+                },
+                "x": {
+                    "type": "integer",
+                    "example": 10
+                },
+                "y": {
+                    "type": "integer",
+                    "example": 20
                 }
             }
         },
