@@ -13,7 +13,7 @@ import (
 // @title Blog CMS API
 // @version 1.0
 // @description ブログCMSのAPI
-// @BasePath /api
+// @BasePath /
 type ITaskController interface {
 	GetAllTasks(c echo.Context) error
 	GetTaskById(c echo.Context) error

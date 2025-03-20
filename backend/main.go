@@ -12,7 +12,7 @@ import (
 // @version 1.0
 // @description ブログCMSのバックエンドAPI
 // @host localhost:8080
-// @BasePath /api
+// @BasePath /
 // @schemes http
 // @securityDefinitions.apikey Bearer
 // @in header
