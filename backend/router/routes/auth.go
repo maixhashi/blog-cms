@@ -10,5 +10,5 @@ func SetupAuthRoutes(e *echo.Echo, uc controller.IUserController) {
 	e.POST("/signup", uc.SignUp)
 	e.POST("/login", uc.LogIn)
 	e.POST("/logout", uc.LogOut)
-	e.GET("/csrf", uc.CsrfToken)
+	e.GET("/csrf-token", uc.CsrfToken)
 }
