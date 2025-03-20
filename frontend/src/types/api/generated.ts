@@ -126,6 +126,117 @@ export interface paths {
       };
     };
   };
+  "/layouts": {
+    /** ログインユーザーのすべてのレイアウトを取得する */
+    get: {
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions["model.LayoutResponse"][];
+        };
+        /** Internal Server Error */
+        500: {
+          schema: { [key: string]: string };
+        };
+      };
+    };
+    /** ユーザーの新しいレイアウトを作成する */
+    post: {
+      parameters: {
+        body: {
+          /** レイアウト情報 */
+          layout: definitions["model.LayoutRequest"];
+        };
+      };
+      responses: {
+        /** Created */
+        201: {
+          schema: definitions["model.LayoutResponse"];
+        };
+        /** Bad Request */
+        400: {
+          schema: { [key: string]: string };
+        };
+        /** Internal Server Error */
+        500: {
+          schema: { [key: string]: string };
+        };
+      };
+    };
+  };
+  "/layouts/{layoutId}": {
+    /** 指定されたIDのレイアウトを取得する */
+    get: {
+      parameters: {
+        path: {
+          /** レイアウトID */
+          layoutId: number;
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions["model.LayoutResponse"];
+        };
+        /** Bad Request */
+        400: {
+          schema: { [key: string]: string };
+        };
+        /** Internal Server Error */
+        500: {
+          schema: { [key: string]: string };
+        };
+      };
+    };
+    /** 指定されたIDのレイアウトを更新する */
+    put: {
+      parameters: {
+        path: {
+          /** レイアウトID */
+          layoutId: number;
+        };
+        body: {
+          /** 更新するレイアウト情報 */
+          layout: definitions["model.LayoutRequest"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions["model.LayoutResponse"];
+        };
+        /** Bad Request */
+        400: {
+          schema: { [key: string]: string };
+        };
+        /** Internal Server Error */
+        500: {
+          schema: { [key: string]: string };
+        };
+      };
+    };
+    /** 指定されたIDのレイアウトを削除する */
+    delete: {
+      parameters: {
+        path: {
+          /** レイアウトID */
+          layoutId: number;
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+        /** Bad Request */
+        400: {
+          schema: { [key: string]: string };
+        };
+        /** Internal Server Error */
+        500: {
+          schema: { [key: string]: string };
+        };
+      };
+    };
+  };
   "/login": {
     /** 既存ユーザーのログイン処理 */
     post: {
@@ -330,6 +441,34 @@ export interface definitions {
   "model.CsrfTokenResponse": {
     /** @example token-string-here */
     csrf_token?: string;
+  };
+  "model.LayoutComponentResponse": {
+    content?: string;
+    created_at?: string;
+    height?: number;
+    id?: number;
+    layout_id?: number;
+    name?: string;
+    type?: string;
+    updated_at?: string;
+    width?: number;
+    x?: number;
+    y?: number;
+  };
+  "model.LayoutRequest": {
+    /** @example ブログのメインレイアウト */
+    title: string;
+  };
+  "model.LayoutResponse": {
+    components?: definitions["model.LayoutComponentResponse"][];
+    /** @example 2023-01-01T00:00:00Z */
+    created_at?: string;
+    /** @example 1 */
+    id?: number;
+    /** @example ブログのメインレイアウト */
+    title?: string;
+    /** @example 2023-01-01T00:00:00Z */
+    updated_at?: string;
   };
   "model.TaskRequest": {
     /** @example 買い物に行く */

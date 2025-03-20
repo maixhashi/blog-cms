@@ -1,25 +1,13 @@
-export type LayoutState = {
-  editedLayout: {
-    id: number;
-    title: string
-  };
-  updateEditedLayout: (payload: {
-    id: number;
-    title: string
-  }) => void;
-  resetEditedLayout: () => void;
-};
+import { EditedLayout, EditedLayoutComponent } from '../../types/models/layout';
 
-export type LayoutComponentState = {
-  editedLayoutComponent: {
-    id: number;
-    title: string;
-    layout_id: number;
-  };
-  updateEditedLayoutComponent: (payload: {
-    id: number;
-    title: string;
-    layout_id: number;
-  }) => void;
+export interface LayoutState {
+  editedLayout: EditedLayout;
+  updateEditedLayout: (payload: EditedLayout) => void;
+  resetEditedLayout: () => void;
+}
+
+export interface LayoutComponentState {
+  editedLayoutComponent: EditedLayoutComponent;
+  updateEditedLayoutComponent: (payload: EditedLayoutComponent) => void;
   resetEditedLayoutComponent: () => void;
-};
+}
