@@ -15,6 +15,7 @@ export const LayoutItem = ({ id, title, onEdit }: LayoutItemProps) => {
   const { deleteLayoutMutation } = useMutateLayout()
   return (
     <li className="layout-item">
+      <span className="layout-id">{id}</span>
       <span className="layout-title">{title}</span>
       <div className="layout-actions">
         <button 

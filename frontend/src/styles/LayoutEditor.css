@@ -1,0 +1,50 @@
+.layout-editor {
+  padding: 20px;
+}
+
+.layout-editor-container {
+  display: flex;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.component-palette {
+  width: 250px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 10px;
+  background-color: #f5f5f5;
+}
+
+.layout-canvas {
+  flex: 1;
+  min-height: 600px;
+}
+
+.draggable-component {
+  transition: all 0.2s;
+}
+
+.draggable-component:hover {
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.grid-item {
+  border: 1px solid #ccc;
+  background-color: white;
+  overflow: hidden;
+}
+
+.component-content {
+  padding: 10px;
+  height: calc(100% - 30px);
+  overflow: auto;
+}
+
+.empty-layout {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: #999;
+}

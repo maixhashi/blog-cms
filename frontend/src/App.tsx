@@ -14,6 +14,7 @@ import { ArticleEditorPage } from './pages/ArticleEditorPage'
 import { HatenaPage } from './pages/HatenaPage'
 import RouteMapPage from './pages/RouteMapPage'
 import { FeedArticlesPage } from './pages/FeedArticlesPage'
+import LayoutEditorPage from './pages/LayoutEditorPage'
 
 function App() {
   useEffect(() => {
@@ -42,6 +43,9 @@ function App() {
         <Route path="/article-editor-page" element={<ArticleEditorPage />} />
         <Route path="/route-map" element={<RouteMapPage />} />
         <Route path="/feed-articles" element={<FeedArticlesPage />} />
+        
+        {/* Add the new layout editor route with a URL parameter for layoutId */}
+        <Route path="/layout-editor/:layoutId" element={<LayoutEditorPage />} />
       </Routes>
     </BrowserRouter>
   )
