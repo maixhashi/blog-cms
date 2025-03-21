@@ -74,78 +74,81 @@ export const LayoutManager = () => {
   }
 
   return (
-    <div className="layout-container">
-      <div className="layout-header">
-        <Squares2X2Icon className="header-icon" />
-        <span className="header-title">Layout Manager</span>
-      </div>
-      <ArrowRightStartOnRectangleIcon
-        onClick={logout}
-        className="logout-icon"
-      />
-      
-      <div className="layout-actions-top">
-        <button 
-          className="add-layout-button"
-          onClick={createNewLayout}
-        >
-          <PlusCircleIcon className="add-icon" />
-          新規レイアウト作成
-        </button>
-      </div>
-
-      {isLoading ? (
-        <p className="loading-text">Loading...</p>
-      ) : (
-        <ul className="layout-list">
-          {data?.map((layout) => (
-            <LayoutItem 
-              key={layout.id}
-              id={layout.id} 
-              title={layout.title}
-              onEdit={() => {
-                updateLayout({
-                  id: layout.id,
-                  title: layout.title,
-                })
-                setIsEditing(true)
-              }}
-            />
-          ))}
-        </ul>
-      )}
-
-      {isEditing && (
-        <div className="sidebar">
-          <h2>{editedLayout.id === 0 ? '新規レイアウト作成' : 'レイアウト編集'}</h2>
-          <form onSubmit={submitLayoutHandler}>
-            <input
-              className="form-input"
-              placeholder="レイアウトタイトル"
-              type="text"
-              onChange={(e) => updateLayout({ ...editedLayout, title: e.target.value })}
-              value={editedLayout.title || ''}
-            />
-            
-            <div className="sidebar-actions">
-              <button 
-                className="save-button" 
-                type="submit"
-                disabled={!editedLayout.title}
-              >
-                保存
-              </button>
-              <button 
-                className="close-button" 
-                type="button" 
-                onClick={() => setIsEditing(false)}
-              >
-                閉じる
-              </button>
-            </div>
-          </form>
+    <div>
+      <h1>レイアウト管理</h1>
+      <div className="layout-container">
+        <div className="layout-header">
+          <Squares2X2Icon className="header-icon" />
+          <span className="header-title">Layout Manager</span>
         </div>
-      )}
+        <ArrowRightStartOnRectangleIcon
+          onClick={logout}
+          className="logout-icon"
+        />
+        
+        <div className="layout-actions-top">
+          <button 
+            className="add-layout-button"
+            onClick={createNewLayout}
+          >
+            <PlusCircleIcon className="add-icon" />
+            新規レイアウト作成
+          </button>
+        </div>
+
+        {isLoading ? (
+          <p className="loading-text">Loading...</p>
+        ) : (
+          <ul className="layout-list">
+            {data?.map((layout) => (
+              <LayoutItem 
+                key={layout.id}
+                id={layout.id} 
+                title={layout.title}
+                onEdit={() => {
+                  updateLayout({
+                    id: layout.id,
+                    title: layout.title,
+                  })
+                  setIsEditing(true)
+                }}
+              />
+            ))}
+          </ul>
+        )}
+
+        {isEditing && (
+          <div className="sidebar">
+            <h2>{editedLayout.id === 0 ? '新規レイアウト作成' : 'レイアウト編集'}</h2>
+            <form onSubmit={submitLayoutHandler}>
+              <input
+                className="form-input"
+                placeholder="レイアウトタイトル"
+                type="text"
+                onChange={(e) => updateLayout({ ...editedLayout, title: e.target.value })}
+                value={editedLayout.title || ''}
+              />
+              
+              <div className="sidebar-actions">
+                <button 
+                  className="save-button" 
+                  type="submit"
+                  disabled={!editedLayout.title}
+                >
+                  保存
+                </button>
+                <button 
+                  className="close-button" 
+                  type="button" 
+                  onClick={() => setIsEditing(false)}
+                >
+                  閉じる
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+      </div>
     </div>
   )
 }
