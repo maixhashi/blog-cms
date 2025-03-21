@@ -2,14 +2,21 @@ import React from 'react';
 import { useDrop } from 'react-dnd';
 import GridLayout from 'react-grid-layout';
 import { definitions } from '../types/api/generated';
+import { TrashIcon } from '@heroicons/react/24/solid'; // HeroIconsを使用
 
 interface LayoutCanvasProps {
   layout: definitions['model.LayoutResponse'] | null;
   onDrop: (componentId: number) => void;
   onLayoutChange: (layout: any[]) => void;
+  onRemoveComponent: (componentId: number) => void; // 削除機能を追加
 }
 
-const LayoutCanvas: React.FC<LayoutCanvasProps> = ({ layout, onDrop, onLayoutChange }) => {
+const LayoutCanvas: React.FC<LayoutCanvasProps> = ({ 
+  layout, 
+  onDrop, 
+  onLayoutChange,
+  onRemoveComponent 
+}) => {
   // ドロップ領域の設定
   const [{ isOver }, drop] = useDrop(() => ({
     accept: 'COMPONENT',
@@ -57,8 +64,28 @@ const LayoutCanvas: React.FC<LayoutCanvasProps> = ({ layout, onDrop, onLayoutCha
         >
           {gridItems.map(item => (
             <div key={item.i} className="grid-item">
-              <div className="component-drag-handle" style={{ cursor: 'move', padding: '5px', backgroundColor: '#eee' }}>
-                {item.component.name}
+              <div className="component-header" style={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                alignItems: 'center',
+                padding: '5px', 
+                backgroundColor: '#eee' 
+              }}>
+                <div className="component-drag-handle" style={{ cursor: 'move' }}>
+                  {item.component.name}
+                </div>
+                <button
+                  onClick={() => onRemoveComponent(parseInt(item.i))}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    color: '#ff4d4f'
+                  }}
+                  title="コンポーネントを削除"
+                >
+                  <TrashIcon style={{ width: '20px', height: '20px' }} />
+                </button>
               </div>
               <div className="component-content" dangerouslySetInnerHTML={{ __html: item.component.content || '' }} />
             </div>

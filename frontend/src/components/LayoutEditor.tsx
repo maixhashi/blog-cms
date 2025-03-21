@@ -8,7 +8,7 @@ import { definitions } from '../types/api/generated';
 import ComponentPalette from './ComponentPalette';
 import LayoutCanvas from './LayoutCanvas';
 import { useQueryLayoutComponents } from '../hooks/useQueryLayoutComponents';
-import { fetchLayout, assignComponentToLayout, updateComponentPosition } from '../api/layoutApi';
+import { fetchLayout, assignComponentToLayout, updateComponentPosition, removeComponentFromLayout } from '../api/layoutApi';
 import axios from 'axios';
 
 interface LayoutEditorProps {
@@ -64,25 +64,35 @@ const LayoutEditor: React.FC<LayoutEditorProps> = ({ layoutId }) => {
       console.error('Failed to assign component:', error);
     }
   };
-
+  
   // レイアウト内のコンポーネント位置変更処理
   const handleLayoutChange = async (newLayout: any[]) => {
     if (!layout || !layout.components) return;
+    
+    console.log('Layout changed:', newLayout);
 
     // 変更されたコンポーネントの位置を更新
     for (const item of newLayout) {
-      const component = layout.components.find(c => c.id === parseInt(item.i));
-      if (component) {
-        try {
-          await updateComponentPosition(component.id!, {
-            x: item.x,
-            y: item.y,
-            width: item.w,
-            height: item.h
-          });
-        } catch (error) {
-          console.error(`Failed to update position for component ${item.i}:`, error);
-        }
+      const componentId = parseInt(item.i);
+      try {
+        console.log(`Updating position for component ${componentId}:`, {
+          x: item.x,
+          y: item.y,
+          width: item.w,
+          height: item.h
+        });
+        
+        // APIを呼び出してコンポーネントの位置を更新
+        await updateComponentPosition(componentId, {
+          x: item.x,
+          y: item.y,
+          width: item.w,
+          height: item.h
+        });
+        
+        console.log(`Position updated for component ${componentId}`);
+      } catch (error) {
+        console.error(`Failed to update position for component ${componentId}:`, error);
       }
     }
 
@@ -105,6 +115,22 @@ const LayoutEditor: React.FC<LayoutEditorProps> = ({ layoutId }) => {
       refetch();
     } catch (error) {
       console.error('Failed to create component:', error);
+    }
+  };
+
+  // コンポーネントをレイアウトから削除する関数
+  const handleRemoveComponent = async (componentId: number) => {
+    try {
+      // APIを呼び出してコンポーネントをレイアウトから削除
+      await removeComponentFromLayout(componentId);
+      
+      // レイアウトを再取得して表示を更新
+      const updatedLayout = await fetchLayout(layoutId);
+      setLayout(updatedLayout);
+      // コンポーネント一覧も更新
+      refetch();
+    } catch (error) {
+      console.error('Failed to remove component:', error);
     }
   };
 
@@ -145,6 +171,7 @@ const LayoutEditor: React.FC<LayoutEditorProps> = ({ layoutId }) => {
               layout={layout} 
               onDrop={handleDrop}
               onLayoutChange={handleLayoutChange}
+              onRemoveComponent={handleRemoveComponent}
             />
           </div>
         </div>

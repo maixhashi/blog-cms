@@ -29,7 +29,8 @@ export const updateComponentPosition = async (
   componentId: number,
   position: definitions['model.PositionRequest']
 ): Promise<void> => {
-  await axios.put(`${API_URL}/layout-components/${componentId}/position`, { position });
+  // APIのエンドポイントとリクエスト形式を確認
+  await axios.put(`${API_URL}/layout-components/${componentId}/position`, position);
 };
 
 // コンポーネントをレイアウトから削除
