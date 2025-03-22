@@ -15,7 +15,7 @@ import { HatenaPage } from './pages/HatenaPage'
 import RouteMapPage from './pages/RouteMapPage'
 import { FeedArticlesPage } from './pages/FeedArticlesPage'
 import LayoutEditorPage from './pages/LayoutEditorPage'
-
+import { LayoutEditor } from './components/LayoutEditor'
 function App() {
   useEffect(() => {
     axios.defaults.withCredentials = true
