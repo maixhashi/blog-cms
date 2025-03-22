@@ -36,9 +36,22 @@ export const DefaultFooter: FC<DefaultFooterProps> = ({
   textColor = '#ffffff',
 }) => {
   return (
-    <Box sx={{ backgroundColor, color: textColor, py: 6 }}>
-      <Container maxWidth="lg">
-        <Grid container spacing={4}>
+    <Box 
+      sx={{ 
+        backgroundColor, 
+        color: textColor, 
+        width: '100%', 
+        height: '100%', 
+        boxSizing: 'border-box',
+        overflow: 'auto',
+        display: 'flex',
+        flexDirection: 'column',
+        position: 'relative', // 追加: 絶対位置指定のための相対位置
+      }}
+      className="react-draggable-handle" // 追加: ドラッグハンドルのクラス
+    >
+      <Box sx={{ flex: 1, p: 2 }}>
+        <Grid container spacing={2}>
           <Grid item xs={12} md={4}>
             <Typography variant="h6" gutterBottom>
               {title}
@@ -49,7 +62,7 @@ export const DefaultFooter: FC<DefaultFooterProps> = ({
           </Grid>
           
           {links.map((section, index) => (
-            <Grid item xs={6} md={2} key={index}>
+            <Grid item xs={6} md={4} key={index}>
               <Typography variant="h6" gutterBottom>
                 {section.section}
               </Typography>
@@ -68,13 +81,38 @@ export const DefaultFooter: FC<DefaultFooterProps> = ({
             </Grid>
           ))}
         </Grid>
-        
-        <Box mt={5} pt={3} borderTop={`1px solid ${textColor}40`}>
-          <Typography variant="body2" align="center">
-            {copyright}
-          </Typography>
-        </Box>
-      </Container>
+      </Box>
+      
+      <Box sx={{ 
+        p: 2, 
+        borderTop: `1px solid ${textColor}40`,
+        mt: 'auto'
+      }}>
+        <Typography variant="body2" align="center">
+          {copyright}
+        </Typography>
+      </Box>
+      
+      {/* 追加: ドラッグハンドルの視覚的インジケーター（オプション） */}
+      <Box
+        sx={{
+          position: 'absolute',
+          top: 0,
+          right: 0,
+          width: '20px',
+          height: '20px',
+          backgroundColor: 'rgba(255, 255, 255, 0.3)',
+          cursor: 'move',
+          borderBottomLeftRadius: '4px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: '12px',
+          color: 'rgba(255, 255, 255, 0.7)',
+        }}
+      >
+        ⋮⋮
+      </Box>
     </Box>
   );
 };

@@ -57,7 +57,13 @@ export const DefaultCalendar: FC<DefaultCalendarProps> = ({
   };
   
   return (
-    <Paper elevation={3} sx={{ p: 2, maxWidth: 350 }}>
+    <Paper elevation={3} sx={{ 
+      p: 2, 
+      width: '100%', 
+      height: '100%', 
+      boxSizing: 'border-box',
+      overflow: 'auto'
+    }}>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
         <Typography 
           variant="button" 

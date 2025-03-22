@@ -20,8 +20,8 @@ export const DefaultHeader: FC<DefaultHeaderProps> = ({
   textColor = '#ffffff',
 }) => {
   return (
-    <AppBar position="static" sx={{ backgroundColor }}>
-      <Toolbar>
+    <AppBar position="static" sx={{ backgroundColor, width: '100%', height: '100%', boxSizing: 'border-box' }}>
+      <Toolbar sx={{ height: '100%' }}>
         <Typography variant="h6" component="div" sx={{ flexGrow: 1, color: textColor }}>
           {title}
         </Typography>

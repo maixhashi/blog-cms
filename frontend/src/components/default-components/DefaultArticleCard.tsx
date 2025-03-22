@@ -27,13 +27,14 @@ export const DefaultArticleCard: FC<DefaultArticleCardProps> = ({
   showTags = true,
 }) => {
   return (
-    <Card sx={{ maxWidth: 345, height: '100%', display: 'flex', flexDirection: 'column' }}>
+    <Card sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
       {showImage && (
         <CardMedia
           component="img"
           height="140"
           image={imageUrl}
           alt={title}
+          sx={{ objectFit: 'cover' }}
         />
       )}
       <CardContent sx={{ flexGrow: 1 }}>

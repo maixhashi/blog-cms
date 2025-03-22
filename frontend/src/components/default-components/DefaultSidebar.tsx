@@ -20,10 +20,10 @@ export const DefaultSidebar: FC<DefaultSidebarProps> = ({
   ],
   backgroundColor = '#f5f5f5',
   textColor = '#333333',
-  width = 250,
+  width = '100%',
 }) => {
   return (
-    <Box sx={{ width, backgroundColor, p: 2 }}>
+    <Box sx={{ width, height: '100%', backgroundColor, p: 2, boxSizing: 'border-box' }}>
       <Typography variant="h6" sx={{ mb: 2, color: textColor }}>
         {title}
       </Typography>
