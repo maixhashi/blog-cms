@@ -21,6 +21,8 @@ func (m *MainEntryPackage) InitRouter() *echo.Echo {
 		m.FeedArticleController,
 		m.LayoutController,
 		m.LayoutComponentController,
+		m.BookController,
+		m.GoogleBookController,
 	)
 	
 	// Swaggerのエンドポイントを追加

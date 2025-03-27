@@ -17,6 +17,8 @@ type MainEntryPackage struct {
 	QiitaController           controller.IQiitaController
 	HatenaController          controller.IHatenaController
 	FeedArticleController     controller.IFeedArticleController
+	BookController            controller.IBookController
+	GoogleBookController      controller.IGoogleBookController
 	
 	// Swaggerハンドラーを追加（オプション）
 	SwaggerEnabled            bool
@@ -39,6 +41,8 @@ func NewMainEntryPackage(db *gorm.DB) *MainEntryPackage {
 	entry.initQiitaModule()
 	entry.initHatenaModule()
 	entry.initFeedArticleModule(db)
+	entry.initBookModule(db)
+	entry.initGoogleBookModule(db)
 
 	return entry
 }

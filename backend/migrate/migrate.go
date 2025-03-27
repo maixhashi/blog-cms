@@ -18,5 +18,6 @@ func main() {
 		&model.Article{},
 		&model.Layout{},
 		&model.LayoutComponent{},
+		&model.Book{},
 	)
 }
