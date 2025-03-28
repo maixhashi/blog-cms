@@ -51,11 +51,115 @@ definitions:
     required:
     - layout_id
     type: object
+  model.BookRequest:
+    properties:
+      author:
+        example: Katherine Cox-Buday
+        maxLength: 100
+        type: string
+      description:
+        example: Go言語の並行処理について解説した書籍
+        type: string
+      image_url:
+        example: http://books.google.com/books/content?id=...
+        type: string
+      isbn:
+        example: "9784873118468"
+        type: string
+      published_date:
+        example: "2018-06-15"
+        type: string
+      title:
+        example: Go言語による並行処理
+        maxLength: 200
+        type: string
+    required:
+    - author
+    - title
+    type: object
+  model.BookResponse:
+    properties:
+      author:
+        example: Katherine Cox-Buday
+        type: string
+      created_at:
+        example: "2023-01-01T00:00:00Z"
+        type: string
+      description:
+        example: Go言語の並行処理について解説した書籍
+        type: string
+      id:
+        example: 1
+        type: integer
+      image_url:
+        example: http://books.google.com/books/content?id=...
+        type: string
+      isbn:
+        example: "9784873118468"
+        type: string
+      published_date:
+        example: "2018-06-15"
+        type: string
+      title:
+        example: Go言語による並行処理
+        type: string
+      updated_at:
+        example: "2023-01-01T00:00:00Z"
+        type: string
+    type: object
   model.CsrfTokenResponse:
     properties:
       csrf_token:
         example: token-string-here
         type: string
+    type: object
+  model.GoogleBook:
+    properties:
+      authors:
+        example:
+        - Katherine Cox-Buday
+        items:
+          type: string
+        type: array
+      description:
+        example: Go言語の並行処理について解説した書籍
+        type: string
+      id:
+        example: zyTCAlFPjgYC
+        type: string
+      image_url:
+        example: http://books.google.com/books/content?id=...
+        type: string
+      isbn:
+        example: "9784873118468"
+        type: string
+      published_date:
+        example: "2018-06-15"
+        type: string
+      title:
+        example: Go言語による並行処理
+        type: string
+    type: object
+  model.GoogleBookSearchRequest:
+    properties:
+      max_results:
+        example: 10
+        type: integer
+      query:
+        example: Go言語
+        type: string
+    required:
+    - query
+    type: object
+  model.GoogleBookSearchResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/model.GoogleBook'
+        type: array
+      total_items:
+        example: 42
+        type: integer
     type: object
   model.LayoutComponentRequest:
     properties:
@@ -383,6 +487,163 @@ paths:
       summary: 記事を更新
       tags:
       - articles
+  /books:
+    get:
+      consumes:
+      - application/json
+      description: ログインユーザーのすべての書籍を取得する
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.BookResponse'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: ユーザーの書籍一覧を取得
+      tags:
+      - books
+    post:
+      consumes:
+      - application/json
+      description: ユーザーの新しい書籍を作成する
+      parameters:
+      - description: 書籍情報
+        in: body
+        name: book
+        required: true
+        schema:
+          $ref: '#/definitions/model.BookRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.BookResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: 新しい書籍を作成
+      tags:
+      - books
+  /books/{bookId}:
+    delete:
+      consumes:
+      - application/json
+      description: 指定されたIDの書籍を削除する
+      parameters:
+      - description: 書籍ID
+        in: path
+        name: bookId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: 書籍を削除
+      tags:
+      - books
+    get:
+      consumes:
+      - application/json
+      description: 指定されたIDの書籍を取得する
+      parameters:
+      - description: 書籍ID
+        in: path
+        name: bookId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.BookResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: 特定の書籍を取得
+      tags:
+      - books
+    put:
+      consumes:
+      - application/json
+      description: 指定されたIDの書籍を更新する
+      parameters:
+      - description: 書籍ID
+        in: path
+        name: bookId
+        required: true
+        type: integer
+      - description: 更新する書籍情報
+        in: body
+        name: book
+        required: true
+        schema:
+          $ref: '#/definitions/model.BookRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.BookResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: 書籍を更新
+      tags:
+      - books
   /csrf-token:
     get:
       consumes:
@@ -398,6 +659,106 @@ paths:
       summary: CSRFトークン取得
       tags:
       - users
+  /google-books/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Google Books APIを使用して特定のIDの書籍を取得する
+      parameters:
+      - description: Google Books ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.GoogleBook'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: 特定の書籍を取得
+      tags:
+      - google-books
+  /google-books/{id}/import:
+    post:
+      consumes:
+      - application/json
+      description: Google Books APIから取得した書籍をユーザーの蔵書に追加する
+      parameters:
+      - description: Google Books ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.BookResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: 書籍をインポート
+      tags:
+      - google-books
+  /google-books/search:
+    post:
+      consumes:
+      - application/json
+      description: Google Books APIを使用して書籍を検索する
+      parameters:
+      - description: 検索条件
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.GoogleBookSearchRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.GoogleBookSearchResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: 書籍を検索
+      tags:
+      - google-books
   /layout-components:
     get:
       consumes:

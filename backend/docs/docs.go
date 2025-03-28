@@ -252,6 +252,243 @@ const docTemplate = `{
                 }
             }
         },
+        "/books": {
+            "get": {
+                "description": "ログインユーザーのすべての書籍を取得する",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "books"
+                ],
+                "summary": "ユーザーの書籍一覧を取得",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.BookResponse"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "ユーザーの新しい書籍を作成する",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "books"
+                ],
+                "summary": "新しい書籍を作成",
+                "parameters": [
+                    {
+                        "description": "書籍情報",
+                        "name": "book",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.BookRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/model.BookResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/books/{bookId}": {
+            "get": {
+                "description": "指定されたIDの書籍を取得する",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "books"
+                ],
+                "summary": "特定の書籍を取得",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "書籍ID",
+                        "name": "bookId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.BookResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "指定されたIDの書籍を更新する",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "books"
+                ],
+                "summary": "書籍を更新",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "書籍ID",
+                        "name": "bookId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "更新する書籍情報",
+                        "name": "book",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.BookRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.BookResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "指定されたIDの書籍を削除する",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "books"
+                ],
+                "summary": "書籍を削除",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "書籍ID",
+                        "name": "bookId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/csrf-token": {
             "get": {
                 "description": "CSRFトークンを取得する",
@@ -270,6 +507,158 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/model.CsrfTokenResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/google-books/search": {
+            "post": {
+                "description": "Google Books APIを使用して書籍を検索する",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "google-books"
+                ],
+                "summary": "書籍を検索",
+                "parameters": [
+                    {
+                        "description": "検索条件",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.GoogleBookSearchRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.GoogleBookSearchResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/google-books/{id}": {
+            "get": {
+                "description": "Google Books APIを使用して特定のIDの書籍を取得する",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "google-books"
+                ],
+                "summary": "特定の書籍を取得",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Google Books ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.GoogleBook"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/google-books/{id}/import": {
+            "post": {
+                "description": "Google Books APIから取得した書籍をユーザーの蔵書に追加する",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "google-books"
+                ],
+                "summary": "書籍をインポート",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Google Books ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/model.BookResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     }
                 }
@@ -1353,12 +1742,157 @@ const docTemplate = `{
                 }
             }
         },
+        "model.BookRequest": {
+            "type": "object",
+            "required": [
+                "author",
+                "title"
+            ],
+            "properties": {
+                "author": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "example": "Katherine Cox-Buday"
+                },
+                "description": {
+                    "type": "string",
+                    "example": "Go言語の並行処理について解説した書籍"
+                },
+                "image_url": {
+                    "type": "string",
+                    "example": "http://books.google.com/books/content?id=..."
+                },
+                "isbn": {
+                    "type": "string",
+                    "example": "9784873118468"
+                },
+                "published_date": {
+                    "type": "string",
+                    "example": "2018-06-15"
+                },
+                "title": {
+                    "type": "string",
+                    "maxLength": 200,
+                    "example": "Go言語による並行処理"
+                }
+            }
+        },
+        "model.BookResponse": {
+            "type": "object",
+            "properties": {
+                "author": {
+                    "type": "string",
+                    "example": "Katherine Cox-Buday"
+                },
+                "created_at": {
+                    "type": "string",
+                    "example": "2023-01-01T00:00:00Z"
+                },
+                "description": {
+                    "type": "string",
+                    "example": "Go言語の並行処理について解説した書籍"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "image_url": {
+                    "type": "string",
+                    "example": "http://books.google.com/books/content?id=..."
+                },
+                "isbn": {
+                    "type": "string",
+                    "example": "9784873118468"
+                },
+                "published_date": {
+                    "type": "string",
+                    "example": "2018-06-15"
+                },
+                "title": {
+                    "type": "string",
+                    "example": "Go言語による並行処理"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2023-01-01T00:00:00Z"
+                }
+            }
+        },
         "model.CsrfTokenResponse": {
             "type": "object",
             "properties": {
                 "csrf_token": {
                     "type": "string",
                     "example": "token-string-here"
+                }
+            }
+        },
+        "model.GoogleBook": {
+            "type": "object",
+            "properties": {
+                "authors": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "Katherine Cox-Buday"
+                    ]
+                },
+                "description": {
+                    "type": "string",
+                    "example": "Go言語の並行処理について解説した書籍"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "zyTCAlFPjgYC"
+                },
+                "image_url": {
+                    "type": "string",
+                    "example": "http://books.google.com/books/content?id=..."
+                },
+                "isbn": {
+                    "type": "string",
+                    "example": "9784873118468"
+                },
+                "published_date": {
+                    "type": "string",
+                    "example": "2018-06-15"
+                },
+                "title": {
+                    "type": "string",
+                    "example": "Go言語による並行処理"
+                }
+            }
+        },
+        "model.GoogleBookSearchRequest": {
+            "type": "object",
+            "required": [
+                "query"
+            ],
+            "properties": {
+                "max_results": {
+                    "type": "integer",
+                    "example": 10
+                },
+                "query": {
+                    "type": "string",
+                    "example": "Go言語"
+                }
+            }
+        },
+        "model.GoogleBookSearchResponse": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.GoogleBook"
+                    }
+                },
+                "total_items": {
+                    "type": "integer",
+                    "example": 42
                 }
             }
         },
