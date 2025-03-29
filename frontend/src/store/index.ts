@@ -7,6 +7,8 @@ import { createArticleSlice } from './slices/articleSlice'
 import { createLayoutSlice } from './slices/layoutSlice'
 import { createLayoutComponentSlice } from './slices/layoutComponentSlice'
 import { createUserSlice } from './slices/userSlice'
+import { createBookSlice } from './slices/bookSlice'
+import { createGoogleBookSlice } from './slices/googleBookSlice'
 
 const useStore = create<State>((...args) => ({
   ...createTaskSlice(...args),
@@ -16,6 +18,8 @@ const useStore = create<State>((...args) => ({
   ...createLayoutSlice(...args),
   ...createLayoutComponentSlice(...args),
   ...createUserSlice(...args),
+  ...createBookSlice(...args),
+  ...createGoogleBookSlice(...args),
 }))
 
 export default useStore

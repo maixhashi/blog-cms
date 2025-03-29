@@ -16,7 +16,9 @@ func NewRouter(
 	artc controller.IArticleController,
 	fac controller.IFeedArticleController,
 	lc controller.ILayoutController,
-	lcc controller.ILayoutComponentController) *echo.Echo { // レイアウトコンポーネントコントローラーを追加
+	lcc controller.ILayoutComponentController,
+	bc controller.IBookController,
+	gbc controller.IGoogleBookController) *echo.Echo {
 	
 	e := echo.New()
 	
@@ -33,7 +35,9 @@ func NewRouter(
 	routes.SetupArticleRoutes(e, artc)
 	routes.SetupFeedArticleRoutes(e, fac)
 	routes.SetupLayoutRoutes(e, lc)
-	routes.SetupLayoutComponentRoutes(e, lcc) // レイアウトコンポーネントのルート設定を追加
+	routes.SetupLayoutComponentRoutes(e, lcc)
+	routes.SetupBookRoutes(e, bc)
+	routes.SetupGoogleBookRoutes(e, gbc)
 	
 	return e
 }
