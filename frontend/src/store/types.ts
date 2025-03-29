@@ -1,4 +1,7 @@
 import { UserState } from './types/userTypes';
+// 衝突している型のインポートを削除
+// import { GoogleBookState } from './types/googleBookTypes';
+// import { BookState } from './types/bookTypes';
 
 // 各スライスの型定義
 export type TaskState = {
@@ -75,5 +78,39 @@ export type ArticleState = {
   resetEditedArticle: () => void
 }
 
+// 書籍関連の型定義
+export type BookState = {
+  editedBook: { 
+    id: number; 
+    title: string;
+    author: string;
+    isbn: string;
+    description: string;
+    thumbnail_url: string;
+    page_count: number;
+  }
+  updateEditedBook: (payload: { 
+    id: number; 
+    title: string;
+    author: string;
+    isbn: string;
+    description: string;
+    thumbnail_url: string;
+    page_count: number;
+  }) => void
+  resetEditedBook: () => void
+}
+
+// Google Books関連の型定義
+export type GoogleBookState = {
+  searchQuery: string;
+  searchResults: any[];
+  selectedBook: any | null;
+  updateSearchQuery: (query: string) => void;
+  setSearchResults: (results: any[]) => void;
+  selectBook: (book: any | null) => void;
+  resetGoogleBookState: () => void;
+}
+
 // 全体のアプリケーション状態の型を更新
-export type State = UserState & TaskState & ExternalAPIState & FeedState & ArticleState & LayoutState & LayoutComponentState
+export type State = UserState & TaskState & ExternalAPIState & FeedState & ArticleState & LayoutState & LayoutComponentState & BookState & GoogleBookState

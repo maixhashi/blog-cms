@@ -16,6 +16,8 @@ import RouteMapPage from './pages/RouteMapPage'
 import { FeedArticlesPage } from './pages/FeedArticlesPage'
 import LayoutEditorPage from './pages/LayoutEditorPage'
 import { LayoutEditor } from './components/LayoutEditor'
+import { GoogleBookSearchPage } from './pages/GoogleBookSearchPage'
+
 function App() {
   useEffect(() => {
     axios.defaults.withCredentials = true
@@ -44,7 +46,10 @@ function App() {
         <Route path="/route-map" element={<RouteMapPage />} />
         <Route path="/feed-articles" element={<FeedArticlesPage />} />
         
-        {/* Add the new layout editor route with a URL parameter for layoutId */}
+        {/* 新しく追加した書籍検索ページのルート */}
+        <Route path="/google-book-search" element={<GoogleBookSearchPage />} />
+        
+        {/* レイアウトエディターのルート */}
         <Route path="/layout-editor/:layoutId" element={<LayoutEditorPage />} />
       </Routes>
     </BrowserRouter>
